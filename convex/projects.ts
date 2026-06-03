@@ -47,6 +47,7 @@ export const upsert = mutation({
     client: v.string(),
     category: v.string(),
     cover: v.string(),
+    icon: v.optional(v.string()),
     blurb: v.string(),
     brief: v.string(),
     outcome: v.string(),

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SEED_ARTICLES } from "../../shared/journal-seed";
 import { PUBLIC_BASE } from "../../shared/nav-config";
+import { CommentsSection } from "../../shared/comments-section";
 
 const CATEGORY_LABEL: Record<string, string> = {
   "case-study": "Case study",
@@ -94,6 +95,8 @@ export function JournalDetailPage({ slug }: { slug: string }) {
           </ul>
         </section>
       )}
+
+      <CommentsSection kind="journal" slug={article.slug} title="Discussion" />
     </article>
   );
 }

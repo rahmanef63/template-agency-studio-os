@@ -7,6 +7,8 @@ export type Project = {
   client: string;
   category: string;
   cover: string;
+  /** Icon token from the icon-picker slice (emoji | `lucide:Name` | `phosphor:Name`). */
+  icon?: string;
   blurb: string;
   brief: string;
   outcome: string;

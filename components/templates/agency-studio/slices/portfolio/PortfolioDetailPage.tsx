@@ -6,6 +6,7 @@ import {
 } from "@/features/portfolio-section";
 import { useProject } from "../../shared/store";
 import { PUBLIC_BASE } from "../../shared/nav-config";
+import { CommentsSection } from "../../shared/comments-section";
 
 /**
  * Hybrid wrapper: project detail via canonical PortfolioDetailView slice
@@ -40,6 +41,11 @@ export function PortfolioDetailPage({ slug }: { slug: string }) {
     ],
   };
   return (
-    <PortfolioDetailView item={item} backHref={`${PUBLIC_BASE}/portfolio`} />
+    <>
+      <PortfolioDetailView item={item} backHref={`${PUBLIC_BASE}/portfolio`} />
+      <div className="mx-auto max-w-3xl px-6 pb-16">
+        <CommentsSection kind="portfolio" slug={p.slug} title="Discussion" />
+      </div>
+    </>
   );
 }

@@ -1,12 +1,14 @@
 import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { commentsTables } from "./features/comments/_schema";
 
 // Agency Studio OS — full schema (Convex target).
 // authTables = @convex-dev/auth. Content tables mirror the localStorage shape
 // the frontend store used, so the Convex-backed store adapter maps 1:1.
 export default defineSchema({
   ...authTables,
+  ...commentsTables,
 
   agencyProjects: defineTable({
     slug: v.string(),
@@ -14,6 +16,7 @@ export default defineSchema({
     client: v.string(),
     category: v.string(),
     cover: v.string(),
+    icon: v.optional(v.string()),
     blurb: v.string(),
     brief: v.string(),
     outcome: v.string(),

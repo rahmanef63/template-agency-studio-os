@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { IconPickerPopover, DynamicIcon } from "@/features/icon-picker";
+import { ImagePickerButton, ImageBanner, parseImage, imageRef } from "@/features/image-picker";
+import { unsplashSearchVia } from "@/features/image-picker";
 import type { Project, ProjectStatus } from "../../../shared/types";
 import { nid, useProjects, useStore } from "../../../shared/store";
 import { ADMIN_BASE } from "../../../shared/nav-config";
@@ -31,6 +34,7 @@ export function ProjectEditor({ id }: { id: string | null }) {
   const [client, setClient] = React.useState(existing?.client ?? "");
   const [category, setCategory] = React.useState(existing?.category ?? "Brand Identity");
   const [cover, setCover] = React.useState(existing?.cover ?? "");
+  const [icon, setIcon] = React.useState(existing?.icon ?? "");
   const [blurb, setBlurb] = React.useState(existing?.blurb ?? "");
   const [brief, setBrief] = React.useState(existing?.brief ?? "");
   const [outcome, setOutcome] = React.useState(existing?.outcome ?? "");
@@ -49,6 +53,7 @@ export function ProjectEditor({ id }: { id: string | null }) {
       client,
       category,
       cover,
+      icon: icon || undefined,
       blurb,
       brief,
       outcome,
@@ -96,7 +101,17 @@ export function ProjectEditor({ id }: { id: string | null }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
+            <div className="flex items-center gap-2">
+              <IconPickerPopover
+                value={icon}
+                onChange={(next) => setIcon(next)}
+              >
+                <Button type="button" variant="outline" size="icon" aria-label="Pick project icon">
+                  {icon ? <DynamicIcon value={icon} size={18} /> : "+"}
+                </Button>
+              </IconPickerPopover>
+              <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
@@ -110,8 +125,27 @@ export function ProjectEditor({ id }: { id: string | null }) {
             </select>
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="cover">Cover image URL</Label>
-            <Input id="cover" value={cover} onChange={(e) => setCover(e.target.value)} placeholder="https://images.unsplash.com/…" />
+            <div className="flex items-center justify-between">
+              <Label>Cover image</Label>
+              <ImagePickerButton
+                label={cover ? "Change cover" : "Choose cover"}
+                title="Project cover"
+                searchUnsplash={unsplashSearchVia("/api/unsplash")}
+                onChange={(img) => setCover(imageRef(img) ?? "")}
+              />
+            </div>
+            {cover ? (
+              <ImageBanner
+                image={parseImage(cover)}
+                searchUnsplash={unsplashSearchVia("/api/unsplash")}
+                onChange={(next) => setCover(next ? imageRef(next) ?? "" : "")}
+                className="h-40 w-full overflow-hidden rounded-md border border-border/60"
+              />
+            ) : (
+              <p className="rounded-md border border-dashed border-border/60 px-3 py-6 text-center text-xs text-muted-foreground">
+                No cover yet — pick a colour, gradient, paste a URL, or browse Unsplash.
+              </p>
+            )}
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="blurb">Blurb</Label>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { DemoRibbon } from "@/components/demo-ribbon";
-import { AiFab } from "@/components/ai-fab";
+import { AiChatFab } from "@/components/ai-chat-fab";
 import { Suspense, type ReactNode } from "react";
 import { SiteShell } from "@/components/templates/_shared/ui/site-shell";
+import { ThemePresetSwitcher } from "@/features/theme-presets";
 import { StoreProvider } from "@/components/templates/agency-studio/shared/store";
 import { DEFAULT_SITE_CONFIG } from "@/components/templates/agency-studio/shared/site-config";
 import {
@@ -42,6 +43,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
           homeHref={PUBLIC_BASE}
           navItems={PUBLIC_NAV}
           cta={PUBLIC_CTA}
+          navExtras={<ThemePresetSwitcher />}
           footerColumns={FOOTER_COLUMNS}
           footerTagline={FOOTER_TAGLINE}
           copyrightHolder={DEFAULT_SITE_CONFIG.studioName}
@@ -49,7 +51,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
           {children}
         </SiteShell>
       <DemoRibbon />
-        <AiFab brand={DEFAULT_SITE_CONFIG.brandName} />
+        <AiChatFab brand={DEFAULT_SITE_CONFIG.brandName} />
         </StoreProvider>
     </Suspense>
   );

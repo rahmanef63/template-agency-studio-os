@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { UpdateCard } from "@/components/admin/update-card";
 import { BackupCard } from "@/components/admin/backup-card";
+import { ThemePresetSwitcher } from "@/features/theme-presets";
 import { DEFAULT_SITE_CONFIG } from "../../../shared/site-config";
 
 export function SettingsView() {
@@ -31,6 +32,19 @@ export function SettingsView() {
           <Row k="Twitter" v={c.twitter} mono />
           <Row k="Locale" v={c.defaultLocale} />
           <Row k="Brand color" v={settings?.brandColor || c.themeColor} mono />
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/60">
+        <CardContent className="flex items-center justify-between gap-4 p-6 text-sm">
+          <div>
+            <p className="font-medium text-foreground">Appearance</p>
+            <p className="text-muted-foreground">
+              Pilih display mode (light/dark/system) + color preset. Tersimpan
+              di browser, berlaku ke seluruh dashboard & situs publik.
+            </p>
+          </div>
+          <ThemePresetSwitcher />
         </CardContent>
       </Card>
 

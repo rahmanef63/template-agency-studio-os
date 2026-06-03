@@ -1,18 +1,27 @@
 "use client";
 
-// Public AI assistant — a floating chat FAB (bottom-right) shown on every public
-// page. Self-contained: no store/convex coupling, so it drops into any template
-// unchanged. Demo replies are canned (like the showcase chat) — a cloner can
-// later wire `reply()` to a real Convex action / LLM. Pairs with <DemoRibbon/>
-// (bottom-left) without overlap.
+/**
+ * Real AI assistant FAB — replaces the old canned `ai-fab.tsx`.
+ *
+ * Wires to the ai-chat slice's convex action (`features/ai-chat/action.chat`)
+ * which calls Claude via the `ai` SDK + @ai-sdk/anthropic. The action is
+ * key-guarded: when ANTHROPIC_API_KEY is not set on the deployment it returns
+ * a notice instead of throwing, so this widget renders and degrades gracefully
+ * (shows a "set API key" notice) — the build / prerender never needs the key.
+ *
+ * Mounted on the public site alongside <DemoRibbon /> (kept as-is).
+ */
+
 import * as React from "react";
+import { useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Bot, Send, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-type Msg = { role: "user" | "ai"; text: string };
+type Msg = { role: "user" | "assistant"; text: string; notice?: boolean };
 
 const SUGGESTIONS = [
   "Apa saja layanan yang ditawarkan?",
@@ -20,24 +29,16 @@ const SUGGESTIONS = [
   "Berapa estimasi harga & waktunya?",
 ];
 
-function reply(q: string, brand: string): string {
-  const t = q.toLowerCase();
-  if (/harga|biaya|tarif|price|budget/.test(t))
-    return `Untuk estimasi harga, paling enak kita ngobrol singkat dulu — kirim kebutuhanmu lewat halaman Kontak, tim ${brand} balas dengan penawaran yang pas.`;
-  if (/layanan|service|jasa|bisa apa|produk/.test(t))
-    return `${brand} fokus bantu kamu dari perencanaan sampai eksekusi. Cek halaman Layanan untuk rincian, atau tanya hal spesifik di sini.`;
-  if (/mulai|start|kerja sama|kontak|hubungi|booking|jadwal/.test(t))
-    return `Gampang — buka halaman Kontak, isi formnya, nanti kita jadwalkan obrolan. Mau aku ringkas dulu kebutuhanmu?`;
-  if (/halo|hai|hi|hello|assalam/.test(t))
-    return `Halo! Aku asisten ${brand}. Ada yang bisa kubantu soal layanan, harga, atau cara mulai?`;
-  return `Noted! Untuk jawaban lengkap soal "${q.slice(0, 60)}", tim ${brand} bisa lanjut lewat halaman Kontak. Ada lagi yang mau ditanya?`;
-}
-
-export function AiFab({ brand = "kami" }: { brand?: string }) {
+export function AiChatFab({ brand = "kami" }: { brand?: string }) {
+  const chat = useAction(api.features.aiChat.action.chat);
   const [open, setOpen] = React.useState(false);
   const [text, setText] = React.useState("");
+  const [pending, setPending] = React.useState(false);
   const [msgs, setMsgs] = React.useState<Msg[]>([
-    { role: "ai", text: `Hai 👋 aku asisten ${brand}. Tanya apa saja soal layanan, harga, atau cara mulai.` },
+    {
+      role: "assistant",
+      text: `Hai 👋 aku asisten ${brand}. Tanya apa saja soal layanan, harga, atau cara mulai.`,
+    },
   ]);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -45,13 +46,37 @@ export function AiFab({ brand = "kami" }: { brand?: string }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [msgs.length]);
 
-  function send(q: string) {
+  async function send(q: string) {
     const question = q.trim();
-    if (!question) return;
+    if (!question || pending) return;
     setText("");
+    const history = msgs
+      .filter((m) => !m.notice)
+      .map((m) => ({ role: m.role, content: m.text }));
     setMsgs((m) => [...m, { role: "user", text: question }]);
-    // demo latency, then canned reply
-    window.setTimeout(() => setMsgs((m) => [...m, { role: "ai", text: reply(question, brand) }]), 450);
+    setPending(true);
+    try {
+      const res = await chat({ prompt: question, history });
+      if (res.ok && res.text) {
+        setMsgs((m) => [...m, { role: "assistant", text: res.text! }]);
+      } else {
+        setMsgs((m) => [
+          ...m,
+          { role: "assistant", text: res.notice ?? "AI is unavailable right now.", notice: true },
+        ]);
+      }
+    } catch (e) {
+      setMsgs((m) => [
+        ...m,
+        {
+          role: "assistant",
+          text: `Koneksi ke asisten gagal: ${(e as Error).message}`,
+          notice: true,
+        },
+      ]);
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
@@ -62,7 +87,11 @@ export function AiFab({ brand = "kami" }: { brand?: string }) {
             <div className="flex items-center gap-2 text-sm font-semibold">
               <Sparkles className="size-4 text-primary" /> Asisten {brand}
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Tutup" className="text-muted-foreground hover:text-foreground">
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="Tutup"
+              className="text-muted-foreground hover:text-foreground"
+            >
               <X className="size-4" />
             </button>
           </div>
@@ -72,13 +101,22 @@ export function AiFab({ brand = "kami" }: { brand?: string }) {
                 <div
                   className={cn(
                     "max-w-[85%] rounded-2xl px-3 py-2 text-sm",
-                    m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+                    m.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : m.notice
+                        ? "border border-dashed border-border/70 bg-muted/40 text-muted-foreground"
+                        : "bg-muted text-foreground",
                   )}
                 >
                   {m.text}
                 </div>
               </div>
             ))}
+            {pending && (
+              <div className="flex justify-start">
+                <div className="max-w-[85%] rounded-2xl bg-muted px-3 py-2 text-sm text-muted-foreground">…</div>
+              </div>
+            )}
             {msgs.length <= 1 && (
               <div className="flex flex-wrap gap-2 pt-1">
                 {SUGGESTIONS.map((s) => (
@@ -96,12 +134,18 @@ export function AiFab({ brand = "kami" }: { brand?: string }) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              send(text);
+              void send(text);
             }}
             className="flex items-center gap-2 border-t p-3"
           >
-            <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Tulis pesan…" className="h-9" />
-            <Button type="submit" size="icon" className="h-9 w-9 shrink-0" aria-label="Kirim">
+            <Input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Tulis pesan…"
+              className="h-9"
+              disabled={pending}
+            />
+            <Button type="submit" size="icon" className="h-9 w-9 shrink-0" aria-label="Kirim" disabled={pending}>
               <Send className="size-4" />
             </Button>
           </form>

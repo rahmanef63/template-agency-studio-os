@@ -30,7 +30,38 @@
     "version": "main"
   },
   "features": [],
-  "slices": [],
+  "slices": [
+    {
+      "slug": "theme-presets",
+      "version": "0.2.0",
+      "category": "ui",
+      "addedAt": "2026-06-03"
+    },
+    {
+      "slug": "icon-picker",
+      "version": "0.4.1",
+      "category": "ui",
+      "addedAt": "2026-06-03"
+    },
+    {
+      "slug": "image-picker",
+      "version": "0.1.0",
+      "category": "ui",
+      "addedAt": "2026-06-03"
+    },
+    {
+      "slug": "comments",
+      "version": "0.2.1",
+      "category": "content",
+      "addedAt": "2026-06-03"
+    },
+    {
+      "slug": "ai-chat",
+      "version": "0.1.0",
+      "category": "ai",
+      "addedAt": "2026-06-03"
+    }
+  ],
   "skills": [],
   "auth": {
     "provider": "convex-auth"
