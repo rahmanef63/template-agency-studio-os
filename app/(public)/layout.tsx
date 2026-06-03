@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { DemoRibbon } from "@/components/demo-ribbon";
+import { AiFab } from "@/components/ai-fab";
 import { Suspense, type ReactNode } from "react";
 import { SiteShell } from "@/components/templates/_shared/ui/site-shell";
 import { StoreProvider } from "@/components/templates/agency-studio/shared/store";
@@ -46,7 +48,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         >
           {children}
         </SiteShell>
-      </StoreProvider>
+      <DemoRibbon />
+        <AiFab brand={DEFAULT_SITE_CONFIG.brandName} />
+        </StoreProvider>
     </Suspense>
   );
 }
