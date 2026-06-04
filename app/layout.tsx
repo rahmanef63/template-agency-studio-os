@@ -9,8 +9,26 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: { default: "agency-studio-os", template: "%s — agency-studio-os" },
-  description: "Built with rahman-resources kitab.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+  ),
+  title: { default: "Agency Studio OS", template: "%s — Agency Studio OS" },
+  description:
+    "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.",
+  openGraph: {
+    title: "Agency Studio OS",
+    description:
+      "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.",
+    type: "website",
+    siteName: "Agency Studio OS",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Agency Studio OS",
+    description:
+      "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
