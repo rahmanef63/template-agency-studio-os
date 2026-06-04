@@ -55,7 +55,7 @@ export function SiteLoader({ brandLetter = "•" }: { brandLetter?: string }) {
         </div>
         <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-brand transition-all duration-300 ease-out"
+            className="h-full rounded-full bg-primary transition-all duration-300 ease-out"
             style={{ width: `${pct}%` }}
           />
         </div>
