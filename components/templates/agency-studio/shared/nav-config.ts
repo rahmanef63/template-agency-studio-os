@@ -6,8 +6,10 @@ import {
   Inbox,
   LayoutDashboard,
   LayoutTemplate,
+  Database,
   LineChart,
   Mail,
+  NotebookPen,
   MessageSquare,
   Newspaper,
   Settings,
@@ -98,6 +100,8 @@ export function buildAdminPrimaryNav(state: State): AdminNavItem[] {
     { id: "newsletter", label: "Newsletter", href: `${ADMIN_BASE}/newsletter`, icon: Mail,          count: pendingSubs || null },
     { id: "analytics",  label: "Analytics",  href: `${ADMIN_BASE}/analytics`,  icon: LineChart,     count: null },
     { id: "ai-config",  label: "AI Config",  href: `${ADMIN_BASE}/ai-config`,  icon: Wand2,         count: null },
+    { id: "notes",      label: "Notes",      href: `${ADMIN_BASE}/notes`,      icon: NotebookPen,   count: null },
+    { id: "database",   label: "Database",   href: `${ADMIN_BASE}/database`,   icon: Database,      count: null },
   ];
 }
 
