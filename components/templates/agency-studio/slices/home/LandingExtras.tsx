@@ -157,13 +157,25 @@ export function JournalTeaser({
             <Link key={a.id} href={`${PUBLIC_BASE}/journal/${a.slug}`} className="group block h-full">
               <Card className="h-full overflow-hidden border-border/60 bg-card/50 transition-[translate,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-foreground/30 hover:shadow-lg">
                 <div
-                  className="flex aspect-[16/9] w-full items-center justify-center bg-gradient-to-br from-muted via-muted/50 to-muted/30 bg-cover bg-center"
+                  className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-muted via-muted/50 to-muted/30 bg-cover bg-center"
                   style={a.cover ? { backgroundImage: `url(${a.cover})` } : undefined}
                   aria-hidden
                 >
                   {!a.cover && a.heroEmoji ? (
                     <span className="text-5xl drop-shadow-md">{a.heroEmoji}</span>
                   ) : null}
+                  {a.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={a.image}
+                      alt={a.title}
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  )}
                 </div>
                 <CardContent className="space-y-2 p-5">
                   <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">

@@ -88,6 +88,7 @@ export default defineSchema({
     readMinutes: v.number(),
     publishedAt: v.number(),
     cover: v.optional(v.string()),
+    image: v.optional(v.string()),
     featured: v.optional(v.boolean()),
     heroEmoji: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),

@@ -46,9 +46,9 @@ const SERVICES = [
 
 // id retained as `_seedId` so comments can key the right article post-insert.
 const ARTICLES = [
-  { _seedId: "art-1", slug: "northwind-rebrand-six-month-revisit", title: "Northwind: enam bulan setelah rebrand", excerpt: "Apa yang berubah setelah identitas baru diluncurkan ke 14 pasar — angka, friksi, dan satu surprise.", body: LONG_BODY, category: "case-study" as const, author: "Asti R.", readMinutes: 7, publishedAt: day(12), cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70", featured: true },
-  { _seedId: "art-2", slug: "design-system-adoption-playbook", title: "Playbook adopsi design system — versi 2026", excerpt: "Dari Storybook ke production: bagaimana memastikan komponen dipakai, bukan dipajang.", body: LONG_BODY, category: "essay" as const, author: "Bagas P.", readMinutes: 9, publishedAt: day(28), cover: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1400&q=70", featured: true },
-  { _seedId: "art-3", slug: "naming-sprint-two-day-format", title: "Naming sprint dalam dua hari, bukan dua bulan", excerpt: "Format workshop terkompresi yang kami pakai untuk semua project sejak Q3.", body: LONG_BODY, category: "field-notes" as const, author: "Citra W.", readMinutes: 5, publishedAt: day(45) },
+  { _seedId: "art-1", slug: "northwind-rebrand-six-month-revisit", title: "Northwind: enam bulan setelah rebrand", excerpt: "Apa yang berubah setelah identitas baru diluncurkan ke 14 pasar — angka, friksi, dan satu surprise.", body: LONG_BODY, category: "case-study" as const, author: "Asti R.", readMinutes: 7, publishedAt: day(12), cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70", image: "https://picsum.photos/seed/agency-art-northwind/800/600", featured: true },
+  { _seedId: "art-2", slug: "design-system-adoption-playbook", title: "Playbook adopsi design system — versi 2026", excerpt: "Dari Storybook ke production: bagaimana memastikan komponen dipakai, bukan dipajang.", body: LONG_BODY, category: "essay" as const, author: "Bagas P.", readMinutes: 9, publishedAt: day(28), cover: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1400&q=70", image: "https://picsum.photos/seed/agency-art-designsystem/800/600", featured: true },
+  { _seedId: "art-3", slug: "naming-sprint-two-day-format", title: "Naming sprint dalam dua hari, bukan dua bulan", excerpt: "Format workshop terkompresi yang kami pakai untuk semua project sejak Q3.", body: LONG_BODY, category: "field-notes" as const, author: "Citra W.", readMinutes: 5, publishedAt: day(45), image: "https://picsum.photos/seed/agency-art-namingsprint/800/600" },
   { _seedId: "art-4", slug: "motion-tokens-oklch-experiment", title: "Motion tokens + OKLch: eksperimen cross-platform", excerpt: "Mendokumentasikan motion seperti color tokens — apa yang berhasil, apa yang patah.", body: LONG_BODY, category: "essay" as const, author: "Daniel S.", readMinutes: 11, publishedAt: day(60), cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70" },
   { _seedId: "art-5", slug: "zenith-launch-1200-preorders", title: "Zenith — 1.200 pre-order dalam 14 hari", excerpt: "Anatomi launch site yang ramping: tiga halaman, satu form, nol distraksi.", body: LONG_BODY, category: "case-study" as const, author: "Asti R.", readMinutes: 8, publishedAt: day(85), cover: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70" },
 ];
@@ -221,6 +221,29 @@ export const syncLanding = mutation({
       }
     }
     return { inserted, reordered };
+  },
+});
+
+// T07: additive image backfill for already-seeded deployments. Matches each
+// article by slug and fills `image` ONLY when the row has none yet — never
+// overwrites an admin-set photo. Mirrors wirausaha's syncCatalogImages.
+export const syncArticleImages = mutation({
+  args: {},
+  handler: async (ctx) => {
+    let patched = 0;
+    for (const a of ARTICLES) {
+      const image = (a as { image?: string }).image;
+      if (!image) continue;
+      const existing = await ctx.db
+        .query("agencyArticles")
+        .withIndex("by_slug", (q) => q.eq("slug", a.slug))
+        .first();
+      if (existing && !existing.image) {
+        await ctx.db.patch(existing._id, { image });
+        patched++;
+      }
+    }
+    return { patched };
   },
 });
 

@@ -23,6 +23,7 @@ export const SEED_ARTICLES: Article[] = [
     readMinutes: 7,
     publishedAt: day(12),
     cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70",
+    image: "https://picsum.photos/seed/agency-art-northwind/800/600",
     featured: true,
   },
   {
@@ -36,6 +37,7 @@ export const SEED_ARTICLES: Article[] = [
     readMinutes: 9,
     publishedAt: day(28),
     cover: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1400&q=70",
+    image: "https://picsum.photos/seed/agency-art-designsystem/800/600",
     featured: true,
   },
   {
@@ -48,6 +50,7 @@ export const SEED_ARTICLES: Article[] = [
     author: "Citra W.",
     readMinutes: 5,
     publishedAt: day(45),
+    image: "https://picsum.photos/seed/agency-art-namingsprint/800/600",
   },
   {
     id: "art-4",

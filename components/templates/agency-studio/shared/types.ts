@@ -50,6 +50,8 @@ export type Article = {
   readMinutes: number;
   publishedAt: number;
   cover?: string;
+  /** T07: real photo overlay for the public journal/case-study card; falls back to cover → emoji+gradient. */
+  image?: string;
   featured?: boolean;
   /** CK-2A: emoji hero placeholder (admin editor picker). */
   heroEmoji?: string;
