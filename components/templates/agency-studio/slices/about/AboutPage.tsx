@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { DEFAULT_SITE_CONFIG } from "../../shared/site-config";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
+import { Reveal, Stagger } from "@/components/templates/_shared/motion";
 
 const TEAM = [
   { name: "Asti R.",   role: "Studio principal", initials: "AR" },
@@ -27,15 +28,21 @@ export function AboutPage() {
         subtitle={c.description}
       />
       <section className="mt-12 grid gap-4 md:grid-cols-3">
+        <Stagger itemClassName="h-full">
         {VALUES.map((v) => (
-          <Card key={v.k} className="border-border/60">
+          <Card
+            key={v.k}
+            className="h-full border-border/60 transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg"
+          >
             <CardContent className="p-5">
               <p className="font-medium">{v.k}</p>
               <p className="mt-2 text-sm text-muted-foreground">{v.v}</p>
             </CardContent>
           </Card>
         ))}
+        </Stagger>
       </section>
+      <Reveal>
       <section className="mt-14">
         <h2 className="text-lg font-medium">Team</h2>
         <ul className="mt-4 grid gap-3 md:grid-cols-2">
@@ -50,6 +57,7 @@ export function AboutPage() {
           ))}
         </ul>
       </section>
+      </Reveal>
     </div>
   );
 }

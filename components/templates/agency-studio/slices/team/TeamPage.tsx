@@ -5,6 +5,7 @@ import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
+import { Reveal, Stagger } from "@/components/templates/_shared/motion";
 import { SEED_TEAM } from "../../shared/team-seed";
 
 /**
@@ -23,8 +24,12 @@ export function TeamPage() {
       />
 
       <section className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Stagger itemClassName="h-full">
         {SEED_TEAM.map((m) => (
-          <Card key={m.id} className="border-border/60">
+          <Card
+            key={m.id}
+            className="h-full border-border/60 transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg"
+          >
             <CardContent className="flex h-full flex-col p-6">
               <div className="flex items-center gap-3">
                 <div
@@ -70,8 +75,10 @@ export function TeamPage() {
             </CardContent>
           </Card>
         ))}
+        </Stagger>
       </section>
 
+      <Reveal>
       <section className="mt-14 rounded-lg border border-dashed border-border p-6 text-center">
         <p className="text-sm">
           Tertarik bergabung?{" "}
@@ -83,6 +90,7 @@ export function TeamPage() {
           Kami buka 1–2 posisi per tahun. Tidak ada deadline lamaran formal.
         </p>
       </section>
+      </Reveal>
     </div>
   );
 }

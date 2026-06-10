@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import {
+  useClients,
   useFeaturedProjects,
   useLandingSections,
+  useProjects,
   useServices,
 } from "../../shared/store";
 import { renderLanding } from "./LandingRenderer";
@@ -19,11 +21,13 @@ export function HomePage() {
   const sections = useLandingSections();
   const featured = useFeaturedProjects();
   const services = useServices();
+  const projects = useProjects();
+  const clients = useClients();
 
   const ordered = React.useMemo(
     () => [...sections].filter((s) => s.enabled).sort((a, b) => a.order - b.order),
     [sections],
   );
 
-  return <>{ordered.map((s) => renderLanding(s, { featured, services }))}</>;
+  return <>{ordered.map((s) => renderLanding(s, { featured, services, projects, clients }))}</>;
 }

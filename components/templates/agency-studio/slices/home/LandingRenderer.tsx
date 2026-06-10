@@ -12,13 +12,17 @@ import {
 } from "@/components/templates/_shared";
 import { LandingSectionShell } from "@/components/templates/_shared/landing/LandingSectionShell";
 import type { LandingSection } from "@/components/templates/_shared/landing/types";
+import { CountUp, Stagger } from "@/components/templates/_shared/motion";
 import { PUBLIC_BASE } from "../../shared/nav-config";
 import { DEFAULT_SITE_CONFIG } from "../../shared/site-config";
-import type { Project, Service } from "../../shared/types";
+import type { Client, Project, Service } from "../../shared/types";
+import { FaqAccordion, StatsBand, TestimonialsCarousel } from "./LandingExtras";
 
 interface Deps {
   featured: Project[];
   services: Service[];
+  projects: Project[];
+  clients: Client[];
 }
 
 /**
@@ -47,10 +51,10 @@ export function renderLanding(section: LandingSection, deps: Deps) {
                     </p>
                     <MetricRow
                       rows={[
-                        { k: "Active clients", v: "14" },
-                        { k: "Projects shipped", v: "86+" },
+                        { k: "Active clients", v: <CountUp value={14} /> },
+                        { k: "Projects shipped", v: <span><CountUp value={86} />+</span> },
                         { k: "Avg engagement", v: "6 weeks" },
-                        { k: "NPS", v: "72" },
+                        { k: "NPS", v: <CountUp value={72} /> },
                       ]}
                     />
                   </CardContent>
@@ -72,11 +76,12 @@ export function renderLanding(section: LandingSection, deps: Deps) {
               subtitle={section.subtitle}
             />
             <div className="mt-10 grid gap-6 md:grid-cols-2">
+              <Stagger itemClassName="h-full">
               {deps.featured.slice(0, 4).map((p) => (
                 <Link
                   key={p.id}
                   href={`${PUBLIC_BASE}/portfolio/${p.slug}`}
-                  className="group block overflow-hidden rounded-lg border border-border/60 bg-card transition hover:shadow-lg"
+                  className="group block h-full overflow-hidden rounded-lg border border-border/60 bg-card transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div
                     className="aspect-[16/9] w-full bg-cover bg-center"
@@ -92,6 +97,7 @@ export function renderLanding(section: LandingSection, deps: Deps) {
                   </div>
                 </Link>
               ))}
+              </Stagger>
             </div>
             <div className="mt-8 text-center">
               <Button asChild variant="ghost">
@@ -114,11 +120,12 @@ export function renderLanding(section: LandingSection, deps: Deps) {
               subtitle={section.subtitle}
             />
             <div className="mt-10 grid gap-4 md:grid-cols-2">
+              <Stagger itemClassName="h-full">
               {deps.services.filter((s) => s.featured).map((s) => (
                 <Link
                   key={s.id}
                   href={`${PUBLIC_BASE}/services`}
-                  className="group rounded-lg border border-border/60 bg-card p-6 transition hover:bg-card/90"
+                  className="group block h-full rounded-lg border border-border/60 bg-card p-6 transition-[translate,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:bg-card/90 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-2">
                     <Sparkles className="size-4 text-muted-foreground" />
@@ -131,6 +138,7 @@ export function renderLanding(section: LandingSection, deps: Deps) {
                   </div>
                 </Link>
               ))}
+              </Stagger>
             </div>
           </div>
         </LandingSectionShell>
@@ -148,12 +156,25 @@ export function renderLanding(section: LandingSection, deps: Deps) {
       );
 
     case "stats":
+      return (
+        <StatsBand
+          section={section}
+          projects={deps.projects}
+          clients={deps.clients}
+          services={deps.services}
+        />
+      );
+
+    case "testimonials":
+      return <TestimonialsCarousel section={section} />;
+
+    case "faq":
+      return <FaqAccordion section={section} />;
+
     case "features":
     case "pricing":
     case "blog":
     case "changelog":
-    case "testimonials":
-    case "faq":
     case "newsletter":
     case "custom":
       return (

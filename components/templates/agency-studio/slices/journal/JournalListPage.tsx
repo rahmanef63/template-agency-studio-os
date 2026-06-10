@@ -5,6 +5,7 @@ import { ArrowUpRight, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
+import { Reveal, Stagger } from "@/components/templates/_shared/motion";
 import { SEED_ARTICLES } from "../../shared/journal-seed";
 import { PUBLIC_BASE } from "../../shared/nav-config";
 
@@ -41,13 +42,14 @@ export function JournalListPage() {
 
       {featured.length > 0 && (
         <section className="grid gap-5 md:grid-cols-2">
+          <Stagger variant="zoom" itemClassName="h-full">
           {featured.map((a) => (
             <Link
               key={a.id}
               href={`${PUBLIC_BASE}/journal/${a.slug}`}
-              className="group block focus-visible:outline-none"
+              className="group block h-full focus-visible:outline-none"
             >
-              <Card className="h-full overflow-hidden border-border/60 transition-colors group-hover:border-foreground/40 group-focus-visible:ring-2 group-focus-visible:ring-ring">
+              <Card className="h-full overflow-hidden border-border/60 transition-[translate,box-shadow,border-color] duration-300 group-hover:-translate-y-1 group-hover:border-foreground/40 group-hover:shadow-lg group-focus-visible:ring-2 group-focus-visible:ring-ring">
                 <div
                   className="aspect-[16/9] w-full bg-gradient-to-br from-muted via-muted/50 to-muted/30"
                   style={a.cover ? { backgroundImage: `url(${a.cover})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
@@ -70,13 +72,17 @@ export function JournalListPage() {
               </Card>
             </Link>
           ))}
+          </Stagger>
         </section>
       )}
 
       {rest.length > 0 && (
         <ul className="mt-10 divide-y divide-border border-y border-border">
-          {rest.map((a) => (
+          {rest.map((a, i) => (
             <li key={a.id}>
+              {/* Reveal sits inside the <li> so the divided-list markup
+                  stays valid; incremental delay = staggered rows. */}
+              <Reveal delay={Math.min(i * 60, 360)}>
               <Link
                 href={`${PUBLIC_BASE}/journal/${a.slug}`}
                 className="group flex flex-wrap items-baseline gap-x-6 gap-y-2 py-5 transition-colors hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
@@ -89,6 +95,7 @@ export function JournalListPage() {
                 <span className="text-xs text-muted-foreground">{formatDate(a.publishedAt)}</span>
                 <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
+              </Reveal>
             </li>
           ))}
         </ul>

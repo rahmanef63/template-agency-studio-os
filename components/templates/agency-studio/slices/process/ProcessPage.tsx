@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
+import { Reveal } from "@/components/templates/_shared/motion";
 import { SEED_PROCESS_STEPS } from "../../shared/journal-seed";
 import { PUBLIC_BASE } from "../../shared/nav-config";
 
@@ -33,6 +34,9 @@ export function ProcessPage() {
                 className="absolute left-[27px] top-16 hidden h-[calc(100%+0px)] w-px bg-border md:block"
               />
             )}
+            {/* Per-step Reveal inside the <li> keeps the ordered-list
+                semantics (Stagger's div wrappers would be invalid here). */}
+            <Reveal delay={Math.min(i * 120, 480)}>
             <Card className="border-border/60">
               <CardContent className="grid gap-5 p-6 md:grid-cols-[56px_1fr] md:p-7">
                 <div className="grid size-14 place-items-center rounded-full border border-border bg-muted/40 text-base font-semibold">
@@ -55,10 +59,12 @@ export function ProcessPage() {
                 </div>
               </CardContent>
             </Card>
+            </Reveal>
           </li>
         ))}
       </ol>
 
+      <Reveal>
       <Card className="mt-12 border-border/60 bg-muted/30">
         <CardContent className="flex flex-wrap items-center justify-between gap-4 p-6">
           <div className="max-w-md">
@@ -74,6 +80,7 @@ export function ProcessPage() {
           </Button>
         </CardContent>
       </Card>
+      </Reveal>
     </div>
   );
 }
