@@ -1,189 +1,195 @@
 "use client";
 
 import * as React from "react";
-import Autoplay from "embla-carousel-autoplay";
-import { Quote } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import Link from "next/link";
+import { ArrowRight, Clock, Compass, Globe, Layers, UserCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { MetricRow, type FeatureItem } from "@/components/templates/_shared";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
+import { CountUp, Stagger } from "@/components/templates/_shared/motion";
 import {
-  CountUp,
-  Marquee,
-  Reveal,
-  Stagger,
-} from "@/components/templates/_shared/motion";
-import { LandingSectionShell } from "@/components/templates/_shared/landing/LandingSectionShell";
+  cfgNumber,
+  parseConfigObject,
+  type FaqItem,
+  type PricingTier,
+  type StatItem,
+  type TestimonialItem,
+} from "@/components/templates/_shared/landing/sections";
 import type { LandingSection } from "@/components/templates/_shared/landing/types";
+import { fmtDate } from "../../shared/store";
+import { PUBLIC_BASE } from "../../shared/nav-config";
 import { DEFAULT_SITE_CONFIG } from "../../shared/site-config";
-import type { Client, Project, Service } from "../../shared/types";
+import type { Article, Client, Project, Service } from "../../shared/types";
 
-/**
- * Motion-kit renderers for the `stats` / `testimonials` / `faq` landing
- * kinds (formerly generic stubs). Item content is admin-overridable via
- * `section.config` JSON — `{ "items": [...] }` — with studio defaults so
- * the sections render believably out of the box.
- */
+/** Agency-studio default content for the shared landing sections — every
+ *  value overridable per-section via the admin landing editor's config
+ *  JSON (see _shared/landing/sections/config.ts for keys). */
 
-/** Parses `section.config` JSON; returns `items` when it's a non-empty array. */
-function configItems<T>(config: string | undefined): T[] | null {
-  if (!config) return null;
-  try {
-    const parsed: unknown = JSON.parse(config);
-    const arr = (parsed as Record<string, unknown>)?.items;
-    return Array.isArray(arr) && arr.length > 0 ? (arr as T[]) : null;
-  } catch {
-    return null;
-  }
-}
+export const AGENCY_FEATURES: FeatureItem[] = [
+  { icon: Compass, title: "Strategy first", blurb: "Positioning before pixels — every engagement starts with the why." },
+  { icon: Layers, title: "Systems, not assets", blurb: "Tokens, components, and guidelines your team actually adopts." },
+  { icon: UserCheck, title: "Principal-led", blurb: "A principal runs every project end-to-end. No handoff to juniors." },
+  { icon: Globe, title: "Async-first", blurb: "Two fixed syncs a week, any timezone — progress you can read." },
+];
 
-/** "By the numbers" band — CountUp stats + client-name marquee strip. */
-export function StatsBand({
-  section,
-  projects,
-  clients,
-  services,
-}: {
-  section: LandingSection;
+/** Live stats — counted from store data so the band stays seed-coherent
+ *  (and updates when admin CRUDs projects/clients/services). */
+export function buildAgencyStats(deps: {
   projects: Project[];
   clients: Client[];
   services: Service[];
-}) {
-  const years =
-    new Date().getFullYear() - Number(DEFAULT_SITE_CONFIG.studioFounded);
-  const stats = [
-    { label: "Projects shipped", value: projects.length },
-    { label: "Active clients", value: clients.filter((c) => c.status === "active").length },
-    { label: "Engagement formats", value: services.length },
-    { label: "Years operating", value: years },
+}): StatItem[] {
+  const years = new Date().getFullYear() - Number(DEFAULT_SITE_CONFIG.studioFounded);
+  return [
+    { value: deps.projects.length, label: "Projects shipped" },
+    { value: deps.clients.filter((c) => c.status === "active").length, label: "Active clients" },
+    { value: deps.services.length, label: "Engagement formats" },
+    { value: years, label: "Years operating" },
   ];
-  return (
-    <LandingSectionShell section={section} defaultClassName="border-b border-border/60">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-        <SectionHead eyebrow="Track record" title={section.title} subtitle={section.subtitle} />
-        <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <Stagger itemClassName="h-full">
-            {stats.map((s) => (
-              <Card key={s.label} className="h-full border-border/60">
-                <CardContent className="p-5">
-                  <p className="text-3xl font-semibold tracking-tight">
-                    <CountUp value={s.value} />
-                  </p>
-                  <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">
-                    {s.label}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </Stagger>
-        </div>
-        {clients.length > 0 && (
-          <Marquee className="mt-12" speed={30}>
-            {clients.map((c) => (
-              <span
-                key={c.id}
-                className="text-lg font-semibold tracking-tight text-muted-foreground/70"
-              >
-                {c.name}
-              </span>
-            ))}
-          </Marquee>
-        )}
-      </div>
-    </LandingSectionShell>
-  );
 }
 
-type Testimonial = { quote: string; author: string; role: string };
-
-const DEFAULT_TESTIMONIALS: Testimonial[] = [
+export const AGENCY_TESTIMONIALS: TestimonialItem[] = [
   { quote: "They shipped a brand system our own team actually uses — components, tokens, and the why behind every call.", author: "Hana Wibowo", role: "VP Marketing — Northwind Logistics" },
   { quote: "Two-week sprint, zero fluff. The positioning deck still runs our sales narrative a year later.", author: "Diego R.", role: "Head of Product — Cumulus SaaS" },
   { quote: "Launch landed on time and the six-week revisit caught what we missed. Rare discipline.", author: "Maya P.", role: "CEO — Zenith Health" },
   { quote: "Felt embedded, not outsourced. Our designers leveled up just by pairing with them.", author: "Pak Anto", role: "Brand Director — Atlas Group" },
 ];
 
-/** Autoplaying testimonial carousel (canon: wirausaha TestimoniPage). */
-export function TestimonialsCarousel({ section }: { section: LandingSection }) {
-  const items = configItems<Testimonial>(section.config) ?? DEFAULT_TESTIMONIALS;
-  return (
-    <LandingSectionShell section={section} defaultClassName="border-b border-border/60 bg-muted/30">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-        <SectionHead eyebrow="Kind words" title={section.title} subtitle={section.subtitle} />
-        <Carousel
-          className="mt-10"
-          opts={{ align: "start", loop: items.length > 3 }}
-          plugins={[Autoplay({ delay: 4500, stopOnInteraction: true })]}
-        >
-          <div className="mb-4 flex items-center justify-end gap-2">
-            <CarouselPrevious />
-            <CarouselNext />
-          </div>
-          <CarouselContent>
-            {items.map((t) => (
-              <CarouselItem key={t.author} className="basis-full sm:basis-1/2 lg:basis-1/3">
-                <Card className="h-full border-border/60 bg-card/60">
-                  <CardContent className="flex h-full flex-col gap-4 p-6">
-                    <Quote className="size-4 text-muted-foreground/50" aria-hidden />
-                    <p className="text-sm leading-relaxed text-foreground/90">{t.quote}</p>
-                    <div className="mt-auto">
-                      <p className="text-sm font-medium">{t.author}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
-      </div>
-    </LandingSectionShell>
-  );
-}
-
-type FaqItem = { q: string; a: string };
-
-const DEFAULT_FAQ: FaqItem[] = [
+export const AGENCY_FAQS: FaqItem[] = [
   { q: "How fast can we start?", a: "Discovery slots open every 2–3 weeks. Send a brief and we respond within 24h with a scope and a start date." },
   { q: "What does an engagement cost?", a: "Productized sprints are fixed-price — see Services. Retainers and multi-month builds are scoped after discovery." },
   { q: "Who actually does the work?", a: "A principal leads every project end-to-end. No handoff to juniors or account managers." },
   { q: "Do you work with remote teams?", a: "Yes — most engagements run async-first with two fixed syncs per week, any timezone." },
 ];
 
-/** FAQ accordion (canon: wirausaha CatalogDetailPage accordion). */
-export function FaqAccordion({ section }: { section: LandingSection }) {
-  const items = configItems<FaqItem>(section.config) ?? DEFAULT_FAQ;
+export const AGENCY_TIERS: PricingTier[] = [
+  {
+    name: "Project",
+    price: "From Rp 65jt",
+    blurb: "Fixed-scope sprint — strategy, identity, or a launch site.",
+    features: ["Scoped brief + fixed timeline", "Principal-led, no handoffs", "Two structured revision rounds", "Six-week post-launch revisit"],
+    ctaLabel: "Send the brief",
+    ctaHref: `${PUBLIC_BASE}/contact`,
+  },
+  {
+    name: "Retainer",
+    price: "Rp 35jt",
+    period: "/month",
+    blurb: "Design ops partnership on a rolling monthly cadence.",
+    features: ["Weekly design sprints", "Design + brand reviews", "Priority booking for new scopes", "Pause or scale any month"],
+    featured: true,
+    ctaLabel: "Book a call",
+    ctaHref: `${PUBLIC_BASE}/contact`,
+  },
+  {
+    name: "Embedded team",
+    price: "Custom",
+    blurb: "A 2–3 person pod inside your product org for multi-month builds.",
+    features: ["Design system + product design", "Async-first, in your tools", "Hiring + interview support", "Quarterly roadmap input"],
+    ctaLabel: "Talk to us",
+    ctaHref: `${PUBLIC_BASE}/contact`,
+  },
+];
+
+/** Default paragraphs for the process-tease `custom` section (CTA comes
+ *  from the section's config JSON — see landing-seed). */
+export const AGENCY_PROCESS_BODY: string[] = [
+  "Empat fase, satu sistem: discovery, design, build, dan six-week revisit. Setiap fase punya scope yang jelas, deliverable yang spesifik, dan tim klien yang terlibat sejak hari satu.",
+  "Bukan handoff, tapi adopsi — klien yang dilibatkan sejak awal mengadopsi sistem 3× lebih cepat.",
+];
+
+/** Hero sidekick card — selected studio metrics next to the headline. */
+export function HeroMetrics() {
   return (
-    <LandingSectionShell section={section} defaultClassName="border-b border-border/60">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-        <SectionHead align="center" eyebrow="FAQ" title={section.title} subtitle={section.subtitle} />
-        <Reveal className="mt-8">
-          <Accordion
-            type="single"
-            collapsible
-            defaultValue={items[0]?.q}
-            className="rounded-xl border border-border/60 bg-card/50 px-4"
-          >
-            {items.map((f) => (
-              <AccordionItem key={f.q} value={f.q}>
-                <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </Reveal>
+    <Card className="border-border/60">
+      <CardContent className="space-y-3 p-6">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Selected stats
+        </p>
+        <MetricRow
+          rows={[
+            { k: "Active clients", v: <CountUp value={14} /> },
+            { k: "Projects shipped", v: <span><CountUp value={86} />+</span> },
+            { k: "Avg engagement", v: "6 weeks" },
+            { k: "NPS", v: <CountUp value={72} /> },
+          ]}
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
+const CATEGORY_LABEL: Record<string, string> = {
+  "case-study": "Case study",
+  essay: "Essay",
+  "field-notes": "Field notes",
+};
+
+/** Latest published articles teaser — backs the "blog"/"changelog"
+ *  landing kinds with real store data (admin CRUD via journal editor). */
+export function JournalTeaser({
+  section,
+  articles,
+}: {
+  section: LandingSection;
+  articles: Article[];
+}) {
+  const limit = cfgNumber(parseConfigObject(section.config), "limit") ?? 3;
+  const latest = articles
+    .filter((a) => a.status !== "draft")
+    .sort((a, b) => b.publishedAt - a.publishedAt)
+    .slice(0, limit);
+  if (latest.length === 0) return null;
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+      <SectionHead
+        eyebrow="Journal"
+        title={section.title}
+        subtitle={section.subtitle}
+        cta={{ label: "All writing", href: `${PUBLIC_BASE}/journal` }}
+      />
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Stagger itemClassName="h-full">
+          {latest.map((a) => (
+            <Link key={a.id} href={`${PUBLIC_BASE}/journal/${a.slug}`} className="group block h-full">
+              <Card className="h-full overflow-hidden border-border/60 bg-card/50 transition-[translate,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-foreground/30 hover:shadow-lg">
+                <div
+                  className="flex aspect-[16/9] w-full items-center justify-center bg-gradient-to-br from-muted via-muted/50 to-muted/30 bg-cover bg-center"
+                  style={a.cover ? { backgroundImage: `url(${a.cover})` } : undefined}
+                  aria-hidden
+                >
+                  {!a.cover && a.heroEmoji ? (
+                    <span className="text-5xl drop-shadow-md">{a.heroEmoji}</span>
+                  ) : null}
+                </div>
+                <CardContent className="space-y-2 p-5">
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                    <Badge variant="secondary" className="font-normal">
+                      {CATEGORY_LABEL[a.category] ?? a.category}
+                    </Badge>
+                    <span>{fmtDate(a.publishedAt)}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Clock className="size-3" /> {a.readMinutes} min
+                    </span>
+                  </div>
+                  <h3 className="font-medium leading-snug group-hover:underline">{a.title}</h3>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">{a.excerpt}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </Stagger>
       </div>
-    </LandingSectionShell>
+      <div className="mt-8 text-center sm:hidden">
+        <Button asChild variant="outline" size="sm">
+          <Link href={`${PUBLIC_BASE}/journal`}>
+            All writing <ArrowRight className="size-4" />
+          </Link>
+        </Button>
+      </div>
+    </div>
   );
 }

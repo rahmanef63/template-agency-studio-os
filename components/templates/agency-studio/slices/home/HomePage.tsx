@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  useArticles,
   useClients,
   useFeaturedProjects,
   useLandingSections,
@@ -23,11 +24,12 @@ export function HomePage() {
   const services = useServices();
   const projects = useProjects();
   const clients = useClients();
+  const articles = useArticles();
 
   const ordered = React.useMemo(
     () => [...sections].filter((s) => s.enabled).sort((a, b) => a.order - b.order),
     [sections],
   );
 
-  return <>{ordered.map((s) => renderLanding(s, { featured, services, projects, clients }))}</>;
+  return <>{ordered.map((s) => renderLanding(s, { featured, services, projects, clients, articles }))}</>;
 }

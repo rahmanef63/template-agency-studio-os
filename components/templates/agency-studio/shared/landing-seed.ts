@@ -1,4 +1,5 @@
 import type { LandingSection } from "@/components/templates/_shared/landing/types";
+import { PUBLIC_BASE } from "./nav-config";
 
 export const SEED_LANDING_SECTIONS: LandingSection[] = [
   {
@@ -7,6 +8,22 @@ export const SEED_LANDING_SECTIONS: LandingSection[] = [
     kind: "hero",
     title: "Brand, design system, and product partner for ambitious teams.",
     subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.",
+    enabled: true,
+  },
+  {
+    id: "ls-stats",
+    order: 15,
+    kind: "stats",
+    title: "By the numbers",
+    subtitle: "A few quick signals from recent quarters.",
+    enabled: true,
+  },
+  {
+    id: "ls-features",
+    order: 18,
+    kind: "features",
+    title: "Why teams pick us",
+    subtitle: "The operating principles behind every engagement.",
     enabled: true,
   },
   {
@@ -26,11 +43,44 @@ export const SEED_LANDING_SECTIONS: LandingSection[] = [
     enabled: true,
   },
   {
-    id: "ls-stats",
-    order: 40,
-    kind: "stats",
-    title: "By the numbers",
-    subtitle: "A few quick signals from recent quarters.",
+    id: "ls-process",
+    order: 35,
+    kind: "custom",
+    title: "How we work",
+    subtitle: "Empat fase, satu sistem — dari discovery hingga six-week revisit.",
+    enabled: true,
+    config: `{"ctaLabel":"See the process","ctaHref":"${PUBLIC_BASE}/process"}`,
+  },
+  {
+    id: "ls-testimonials",
+    order: 38,
+    kind: "testimonials",
+    title: "Teams we've shipped with",
+    subtitle: "Real words from product, marketing, and founding teams.",
+    enabled: true,
+  },
+  {
+    id: "ls-pricing",
+    order: 42,
+    kind: "pricing",
+    title: "Engagement models",
+    subtitle: "Project, retainer, or embedded — pick the shape that fits.",
+    enabled: true,
+  },
+  {
+    id: "ls-faq",
+    order: 46,
+    kind: "faq",
+    title: "Frequently asked",
+    subtitle: "Start dates, pricing, and how the work actually runs.",
+    enabled: true,
+  },
+  {
+    id: "ls-blog",
+    order: 48,
+    kind: "blog",
+    title: "From the journal",
+    subtitle: "Case-study revisits, playbooks, and field notes from the studio.",
     enabled: true,
   },
   {
@@ -39,6 +89,14 @@ export const SEED_LANDING_SECTIONS: LandingSection[] = [
     kind: "cta",
     title: "Brief us — get a proposal in 5 days.",
     subtitle: "No commitment. We respond within 24h.",
+    enabled: true,
+  },
+  {
+    id: "ls-newsletter",
+    order: 55,
+    kind: "newsletter",
+    title: "Studio notes, monthly",
+    subtitle: "One email a month — what we shipped, what we learned. No spam.",
     enabled: true,
   },
 ];
