@@ -23,7 +23,7 @@ export function SiteNav({
   cta,
   extras,
 }: {
-  brand: Pick<Brand, "brandLetter" | "brandName">;
+  brand: Pick<Brand, "brandLetter" | "brandName" | "logoUrl">;
   homeHref: string;
   items: NavItem[];
   cta?: Cta;
@@ -35,7 +35,12 @@ export function SiteNav({
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
         <Link href={homeHref} className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="grid size-7 place-items-center rounded-md bg-foreground text-background">{brand.brandLetter}</span>
+          {brand.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={brand.logoUrl} alt={brand.brandName} className="h-7 w-auto rounded-md object-contain" />
+          ) : (
+            <span className="grid size-7 place-items-center rounded-md bg-foreground text-background">{brand.brandLetter}</span>
+          )}
           <span>{brand.brandName}</span>
         </Link>
         <nav className="hidden items-center gap-1 text-sm md:flex">

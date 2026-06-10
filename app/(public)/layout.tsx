@@ -3,6 +3,7 @@ import { DemoRibbon } from "@/components/demo-ribbon";
 import { AiChatFab } from "@/components/ai-chat-fab";
 import { Suspense, type ReactNode } from "react";
 import { SiteShell } from "@/components/templates/_shared/ui/site-shell";
+import { PublicChrome } from "@/components/public-chrome";
 import { ThemePresetSwitcher } from "@/features/theme-presets";
 import { StoreProvider } from "@/components/templates/agency-studio/shared/store";
 import { SiteLoader } from "@/components/site-loader";
@@ -47,18 +48,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     <Suspense fallback={null}>
       <StoreProvider>
       <SiteLoader brandLetter={DEFAULT_SITE_CONFIG.brandLetter} />
-        <SiteShell
-          brand={DEFAULT_SITE_CONFIG}
-          homeHref={PUBLIC_BASE}
-          navItems={PUBLIC_NAV}
-          cta={PUBLIC_CTA}
-          navExtras={<ThemePresetSwitcher />}
-          footerColumns={FOOTER_COLUMNS}
-          footerTagline={FOOTER_TAGLINE}
-          copyrightHolder={DEFAULT_SITE_CONFIG.studioName}
-        >
-          {children}
-        </SiteShell>
+        <PublicChrome>{children}</PublicChrome>
       <DemoRibbon />
         <AiChatFab brand={DEFAULT_SITE_CONFIG.brandName} />
         </StoreProvider>
