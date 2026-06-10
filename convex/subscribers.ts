@@ -35,3 +35,27 @@ export const remove = mutation({
     await ctx.db.delete(id);
   },
 });
+
+// Public newsletter signup from the landing NewsletterSection (onSubscribe).
+// Reuses the existing agencySubscribers table + by_email index.
+export const subscribe = mutation({
+  args: { email: v.string(), source: v.string() },
+  handler: async (ctx, { email, source }) => {
+    const existing = await ctx.db
+      .query("agencySubscribers")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .unique();
+    if (existing) {
+      if (existing.status === "unsubscribed") {
+        await ctx.db.patch(existing._id, { status: "pending", ts: Date.now() });
+      }
+      return existing._id;
+    }
+    return ctx.db.insert("agencySubscribers", {
+      email,
+      source,
+      status: "pending",
+      ts: Date.now(),
+    });
+  },
+});

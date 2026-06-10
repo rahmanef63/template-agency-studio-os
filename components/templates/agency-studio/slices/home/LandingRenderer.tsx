@@ -31,6 +31,7 @@ interface Deps {
   projects: Project[];
   clients: Client[];
   articles: Article[];
+  onSubscribe?: (email: string) => Promise<{ ok: boolean; notice?: string }>;
 }
 
 /**
@@ -188,7 +189,7 @@ export function renderLanding(section: LandingSection, deps: Deps) {
     case "newsletter":
       return (
         <LandingSectionShell section={section}>
-          <NewsletterSection section={section} placeholder="you@company.com" buttonLabel="Subscribe" successText="Thanks — you're on the list." />
+          <NewsletterSection section={section} placeholder="you@company.com" buttonLabel="Subscribe" successText="Thanks — you're on the list." onSubscribe={deps.onSubscribe} />
         </LandingSectionShell>
       );
 
