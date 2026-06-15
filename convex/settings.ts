@@ -19,6 +19,7 @@ const FIELDS = {
   contactEmail: v.optional(v.string()),
   brandColor: v.optional(v.string()),
   themeDefault: v.optional(v.string()),
+  themePreset: v.optional(v.string()),
   logoUrl: v.optional(v.string()),
   faviconUrl: v.optional(v.string()),
   socials: v.optional(v.string()),
