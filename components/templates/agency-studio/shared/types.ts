@@ -69,8 +69,23 @@ export type TeamMember = {
   avatar: string;
   initials: string;
   location?: string;
-  links?: { label: string; href: string }[];
+  /** Serialized [{label,href}] chips. Parsed client-side (parseTeamLinks). */
+  links?: string;
+  order: number;
 };
+
+export type TeamLink = { label: string; href: string };
+
+/** Safe parse of the serialized `links` JSON column. */
+export function parseTeamLinks(raw?: string): TeamLink[] {
+  if (!raw) return [];
+  try {
+    const v = JSON.parse(raw);
+    return Array.isArray(v) ? (v as TeamLink[]) : [];
+  } catch {
+    return [];
+  }
+}
 
 export type ProcessStep = {
   id: string;
@@ -161,6 +176,8 @@ export type State = {
   newsletters: NewsletterDraft[];
   /** CK-2A: AI assistant config (model, tone, prompt, playground). */
   aiConfig: AiConfig;
+  /** Studio team members — public Team/About pages + admin editor. */
+  team: TeamMember[];
   /** O-wave: public pages CRUD slice. */
   pages: import("@/components/templates/_shared/pages/types").PageEntry[];
   /** AB-wave: home-page section composition. Ordered + toggleable. */
@@ -195,5 +212,7 @@ export type Action =
   | { type: "newsletter.send"; id: string }
   | { type: "ai-config.update"; patch: Partial<AiConfig> }
   | { type: "ai-config.reset" }
+  | { type: "team.upsert"; member: TeamMember }
+  | { type: "team.delete"; id: string }
   | { type: "hydrate"; state: State }
   | { type: "reset" };

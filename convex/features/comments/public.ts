@@ -27,7 +27,9 @@ export const listForTarget = query({
       { target },
     );
     return rows
-      .filter((r) => !r.deletedAt)
+      // Hide soft-deleted + admin-flagged-spam rows from the public thread.
+      // Absent status === legacy/visitor write, treated as visible.
+      .filter((r) => !r.deletedAt && r.status !== "spam")
       .map((r) => ({
         id: r._id as string,
         target: {

@@ -30,6 +30,20 @@ export const commentsTables = {
     deletedAt: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
+    /**
+     * Consumer moderation fields (agency host). Absent = treat as pending in
+     * the admin moderation queue; public display hides only `status === "spam"`
+     * or soft-deleted rows. Optional so the generic slice stays unaffected.
+     */
+    status: v.optional(
+      v.union(v.literal("pending"), v.literal("approved"), v.literal("spam")),
+    ),
+    aiFlag: v.optional(v.union(v.literal("spam"), v.literal("toxic"), v.null())),
+    /** Display author name/email for moderation (visitor-supplied or seed). */
+    authorName: v.optional(v.string()),
+    authorEmail: v.optional(v.string()),
+    /** Cached target title for the admin moderation list. */
+    postTitle: v.optional(v.string()),
   })
     .index("by_target_kind_id", ["targetKind", "targetId"])
     .index("by_target_kind_id_subId", ["targetKind", "targetId", "targetSubId"])

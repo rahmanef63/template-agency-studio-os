@@ -1,6 +1,10 @@
 import type { TeamMember } from "./types";
 import { PUBLIC_BASE } from "./nav-config";
 
+// Reference seed for the studio team. The live source of truth is the
+// `agencyTeam` Convex table (seeded via convex/seed.ts TEAM + edited in the
+// admin Team editor); this array is kept only as documentation of the shape.
+// `links` is serialized JSON to match the agencyTeam.links string column.
 export const SEED_TEAM: TeamMember[] = [
   {
     id: "tm-1",
@@ -10,10 +14,11 @@ export const SEED_TEAM: TeamMember[] = [
     avatar: "🪐",
     initials: "AR",
     location: "Jakarta",
-    links: [
+    links: JSON.stringify([
       { label: "LinkedIn", href: "#" },
       { label: "Read writing", href: `${PUBLIC_BASE}/journal?author=Asti` },
-    ],
+    ]),
+    order: 10,
   },
   {
     id: "tm-2",
@@ -23,10 +28,11 @@ export const SEED_TEAM: TeamMember[] = [
     avatar: "🎨",
     initials: "BP",
     location: "Yogyakarta",
-    links: [
+    links: JSON.stringify([
       { label: "Dribbble", href: "#" },
       { label: "Are.na", href: "#" },
-    ],
+    ]),
+    order: 20,
   },
   {
     id: "tm-3",
@@ -36,9 +42,8 @@ export const SEED_TEAM: TeamMember[] = [
     avatar: "🧭",
     initials: "CW",
     location: "Bandung",
-    links: [
-      { label: "Substack", href: "#" },
-    ],
+    links: JSON.stringify([{ label: "Substack", href: "#" }]),
+    order: 30,
   },
   {
     id: "tm-4",
@@ -48,9 +53,8 @@ export const SEED_TEAM: TeamMember[] = [
     avatar: "⚙️",
     initials: "DS",
     location: "Singapore (remote)",
-    links: [
-      { label: "GitHub", href: "#" },
-    ],
+    links: JSON.stringify([{ label: "GitHub", href: "#" }]),
+    order: 40,
   },
   {
     id: "tm-5",
@@ -60,8 +64,7 @@ export const SEED_TEAM: TeamMember[] = [
     avatar: "🤝",
     initials: "MP",
     location: "Jakarta",
-    links: [
-      { label: "Email", href: "mailto:halo@atelier.studio" },
-    ],
+    links: JSON.stringify([{ label: "Email", href: "mailto:halo@atelier.studio" }]),
+    order: 50,
   },
 ];

@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as _shared_auth from "../_shared/auth.js";
 import type * as aiConfig from "../aiConfig.js";
 import type * as articles from "../articles.js";
 import type * as auth from "../auth.js";
@@ -34,6 +35,7 @@ import type * as services from "../services.js";
 import type * as settings from "../settings.js";
 import type * as setup from "../setup.js";
 import type * as subscribers from "../subscribers.js";
+import type * as team from "../team.js";
 import type * as update from "../update.js";
 import type * as users from "../users.js";
 
@@ -44,6 +46,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "_shared/auth": typeof _shared_auth;
   aiConfig: typeof aiConfig;
   articles: typeof articles;
   auth: typeof auth;
@@ -70,6 +73,7 @@ declare const fullApi: ApiFromModules<{
   settings: typeof settings;
   setup: typeof setup;
   subscribers: typeof subscribers;
+  team: typeof team;
   update: typeof update;
   users: typeof users;
 }>;

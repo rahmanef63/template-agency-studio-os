@@ -69,6 +69,16 @@ const COMMENTS = [
   { postSeedId: "art-5", postTitle: ARTICLES[4].title, author: "Sari L.", email: "sari@kira.example", body: "Launch site yang ramping memang underrated. Tiga halaman, satu form — kami akan tiru pendekatan ini.", status: "approved" as const, aiFlag: null, ts: day(5) },
 ];
 
+// Mirrors components/templates/agency-studio/shared/team-seed.ts SEED_TEAM.
+// `links` serialized to JSON to match the agencyTeam.links string column.
+const TEAM = [
+  { name: "Asti Rahmadhani", role: "Studio principal · strategy", bio: "Membangun atelier.studio sejak 2019. Sebelumnya design lead di dua agency Jakarta. Spesialisasi: positioning B2B, naming, dan governance brand system.", avatar: "🪐", initials: "AR", location: "Jakarta", links: JSON.stringify([{ label: "LinkedIn", href: "#" }, { label: "Read writing", href: "/journal?author=Asti" }]), order: 10 },
+  { name: "Bagas Pranoto", role: "Design lead · identity systems", bio: "Type-nerd, motion-curious. Lead untuk semua identity work — dari logo lockup hingga motion principles. Eks-team brand Tokopedia.", avatar: "🎨", initials: "BP", location: "Yogyakarta", links: JSON.stringify([{ label: "Dribbble", href: "#" }, { label: "Are.na", href: "#" }]), order: 20 },
+  { name: "Citra Wijaya", role: "Strategy lead · research", bio: "Strategy lead untuk semua discovery sprint. Latar belakang qualitative research + service design. Memimpin proses interview dan synthesis.", avatar: "🧭", initials: "CW", location: "Bandung", links: JSON.stringify([{ label: "Substack", href: "#" }]), order: 30 },
+  { name: "Daniel Suharto", role: "Engineering lead · design ops", bio: "Menjembatani Figma ke production. Token architecture, Storybook setup, dan handoff tooling. React + Tailwind di siang hari, motion di malam hari.", avatar: "⚙️", initials: "DS", location: "Singapore (remote)", links: JSON.stringify([{ label: "GitHub", href: "#" }]), order: 40 },
+  { name: "Maya Putri", role: "Account director · partnerships", bio: "Titik kontak pertama untuk semua project baru. Menjaga scope, timeline, dan komunikasi dua arah dengan tim klien.", avatar: "🤝", initials: "MP", location: "Jakarta", links: JSON.stringify([{ label: "Email", href: "mailto:halo@atelier.studio" }]), order: 50 },
+];
+
 const LEADS = [
   { name: "Rina Halim", company: "Halim Furniture", email: "rina@halim.example", topic: "Visual identity refresh", source: "Contact form", budget: "Rp 80–120jt", status: "new" as const, ts: hr(2) },
   { name: "Bayu A.", company: "PT Sumber Tani", email: "bayu@stani.example", topic: "Brand strategy + naming", source: "Service: Brand Strategy", budget: "Rp 65jt", status: "contacted" as const, ts: day(2) },
@@ -132,27 +142,42 @@ async function insertAll(ctx: any) {
   for (const s of SERVICES) await ctx.db.insert("agencyServices", s);
   for (const l of LEADS) await ctx.db.insert("agencyLeads", l);
 
-  // Articles: remember the new _id keyed by the seed id so comments link up.
-  const articleIdBySeed = new Map<string, string>();
+  // Articles: remember the slug keyed by the seed id so comments link up to
+  // the public journal route (comment_threads anchors on targetId = slug).
+  const articleSlugBySeed = new Map<string, string>();
   for (let i = 0; i < ARTICLES.length; i++) {
     const { _seedId, ...rest } = ARTICLES[i];
-    const id = await ctx.db.insert("agencyArticles", {
+    await ctx.db.insert("agencyArticles", {
       ...rest,
       status: i < 4 ? "published" : "draft",
       heroEmoji: HERO_EMOJI[i % 5],
       tags: tagsFor(rest.category),
     });
-    articleIdBySeed.set(_seedId, id);
+    articleSlugBySeed.set(_seedId, rest.slug);
   }
 
+  // Comments live in `comment_threads` — the SAME table the public
+  // comments-section writes to and the admin CommentsView now moderates.
+  // targetKind/targetId match the public journal detail page's target.
   for (const c of COMMENTS) {
-    const { postSeedId, ...rest } = c;
-    await ctx.db.insert("agencyComments", {
-      ...rest,
-      postId: articleIdBySeed.get(postSeedId) ?? postSeedId,
+    const { postSeedId, postTitle, author, email, body, status, aiFlag, ts } = c;
+    await ctx.db.insert("comment_threads", {
+      tenantId: null,
+      actorId: "seed",
+      targetKind: "journal",
+      targetId: articleSlugBySeed.get(postSeedId) ?? postSeedId,
+      body,
+      status,
+      aiFlag,
+      authorName: author,
+      authorEmail: email,
+      postTitle,
+      createdAt: ts,
+      updatedAt: ts,
     });
   }
 
+  for (const t of TEAM) await ctx.db.insert("agencyTeam", t);
   for (const s of SUBSCRIBERS) await ctx.db.insert("agencySubscribers", s);
   for (const n of NEWSLETTERS) await ctx.db.insert("agencyNewsletters", n);
   for (const s of LANDING) await ctx.db.insert("landingSections", { sectionId: s.id, data: s });
@@ -164,6 +189,7 @@ async function insertAll(ctx: any) {
     services: SERVICES.length,
     leads: LEADS.length,
     articles: ARTICLES.length,
+    team: TEAM.length,
     comments: COMMENTS.length,
     subscribers: SUBSCRIBERS.length,
     newsletters: NEWSLETTERS.length,
@@ -178,7 +204,9 @@ const CONTENT_TABLES = [
   "agencyServices",
   "agencyLeads",
   "agencyArticles",
+  "agencyTeam",
   "agencyComments",
+  "comment_threads",
   "agencySubscribers",
   "agencyNewsletters",
   "agencyAiConfig",

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
 import { Reveal, Stagger } from "@/components/templates/_shared/motion";
-import { SEED_ARTICLES } from "../../shared/journal-seed";
+import { useArticles } from "../../shared/store";
 import { PUBLIC_BASE } from "../../shared/nav-config";
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -28,7 +28,10 @@ function formatDate(ts: number) {
  * surface in a 2-col hero grid; the remainder fall into a uniform list.
  */
 export function JournalListPage() {
-  const sorted = [...SEED_ARTICLES].sort((a, b) => b.publishedAt - a.publishedAt);
+  const articles = useArticles();
+  const sorted = [...articles]
+    .filter((a) => a.status !== "draft")
+    .sort((a, b) => b.publishedAt - a.publishedAt);
   const featured = sorted.filter((a) => a.featured);
   const rest = sorted.filter((a) => !a.featured);
 

@@ -15,6 +15,7 @@ import {
   Settings,
   Sparkles,
   Users,
+  UsersRound,
   Wand2,
 } from "lucide-react";
 import type { AdminNavGroup, AdminNavItem, FooterColumn, NavItem, User } from "@/components/templates/_shared/types/common";
@@ -95,6 +96,7 @@ export function buildAdminPrimaryNav(state: State): AdminNavItem[] {
       ],
     },
     { id: "clients",    label: "Clients",    href: `${ADMIN_BASE}/clients`,    icon: Users,         count: activeClients || null },
+    { id: "team",       label: "Team",       href: `${ADMIN_BASE}/team`,       icon: UsersRound,    count: state.team.length || null },
     { id: "leads",      label: "Leads",      href: `${ADMIN_BASE}/leads`,      icon: Inbox,         count: newLeads || null },
     { id: "comments",   label: "Comments",   href: `${ADMIN_BASE}/comments`,   icon: MessageSquare, count: pendingComments || null },
     { id: "newsletter", label: "Newsletter", href: `${ADMIN_BASE}/newsletter`, icon: Mail,          count: pendingSubs || null },

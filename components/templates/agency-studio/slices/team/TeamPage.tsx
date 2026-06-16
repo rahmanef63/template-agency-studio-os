@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
 import { Reveal, Stagger } from "@/components/templates/_shared/motion";
-import { SEED_TEAM } from "../../shared/team-seed";
+import { useTeam } from "../../shared/store";
+import { parseTeamLinks } from "../../shared/types";
 
 /**
  * Team page — grid of studio members with avatar, role, bio, location, and
@@ -14,6 +15,7 @@ import { SEED_TEAM } from "../../shared/team-seed";
  * provisioning for this OS-style template.
  */
 export function TeamPage() {
+  const team = useTeam();
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <SectionHead
@@ -25,7 +27,9 @@ export function TeamPage() {
 
       <section className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <Stagger itemClassName="h-full">
-        {SEED_TEAM.map((m) => (
+        {team.map((m) => {
+          const links = parseTeamLinks(m.links);
+          return (
           <Card
             key={m.id}
             className="h-full border-border/60 transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg"
@@ -52,9 +56,9 @@ export function TeamPage() {
                     <MapPin className="size-3" /> {m.location}
                   </p>
                 )}
-                {m.links && m.links.length > 0 && (
+                {links.length > 0 && (
                   <ul className="mt-3 flex flex-wrap gap-2">
-                    {m.links.map((l) => (
+                    {links.map((l) => (
                       <li key={l.label}>
                         <Link
                           href={l.href}
@@ -74,7 +78,8 @@ export function TeamPage() {
               </div>
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
         </Stagger>
       </section>
 

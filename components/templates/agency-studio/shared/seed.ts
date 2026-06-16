@@ -5,6 +5,7 @@ import { SEED_LEADS } from "./leads-seed";
 import { SEED_LANDING_SECTIONS } from "./landing-seed";
 import { SEED_SUBSCRIBERS, SEED_NEWSLETTERS } from "./newsletter-seed";
 import { DEFAULT_AI_CONFIG } from "./ai-config-seed";
+import { SEED_TEAM } from "./team-seed";
 import type { Article, Client, Project, Service, State } from "./types";
 
 // Re-export so existing public-side imports (`import { SEED_LANDING_SECTIONS }
@@ -160,6 +161,7 @@ export const SEED_STATE: State = {
   services: SEED_SERVICES,
   leads: SEED_LEADS,
   articles: ENRICHED_ARTICLES,
+  team: SEED_TEAM,
   comments: SEED_COMMENTS,
   subscribers: SEED_SUBSCRIBERS,
   newsletters: SEED_NEWSLETTERS,

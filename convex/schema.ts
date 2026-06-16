@@ -110,6 +110,19 @@ export default defineSchema({
     ts: v.number(),
   }).index("by_status", ["status"]),
 
+  agencyTeam: defineTable({
+    name: v.string(),
+    role: v.string(),
+    bio: v.string(),
+    avatar: v.string(),
+    initials: v.string(),
+    location: v.optional(v.string()),
+    // Serialized [{label,href}] link chips (stored as JSON to keep the editor
+    // a single text field; parsed client-side with a safe fallback).
+    links: v.optional(v.string()),
+    order: v.number(),
+  }).index("by_order", ["order"]),
+
   agencySubscribers: defineTable({
     email: v.string(),
     status: v.union(

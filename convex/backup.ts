@@ -17,6 +17,7 @@ const CONTENT_TABLES = [
   "agencyServices",
   "agencyLeads",
   "agencyArticles",
+  "agencyTeam",
   "agencyComments",
   "agencySubscribers",
   "agencyNewsletters",

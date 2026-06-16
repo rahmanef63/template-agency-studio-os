@@ -4,13 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DEFAULT_SITE_CONFIG } from "../../shared/site-config";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
 import { Reveal, Stagger } from "@/components/templates/_shared/motion";
-
-const TEAM = [
-  { name: "Asti R.",   role: "Studio principal", initials: "AR" },
-  { name: "Bagas P.",  role: "Design lead",      initials: "BP" },
-  { name: "Citra W.",  role: "Strategy lead",    initials: "CW" },
-  { name: "Daniel S.", role: "Engineering lead", initials: "DS" },
-];
+import { useTeam } from "../../shared/store";
 
 const VALUES = [
   { k: "Strategy first", v: "Every visual move ties back to a positioning bet." },
@@ -20,6 +14,7 @@ const VALUES = [
 
 export function AboutPage() {
   const c = DEFAULT_SITE_CONFIG;
+  const team = useTeam();
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
       <SectionHead
@@ -46,8 +41,8 @@ export function AboutPage() {
       <section className="mt-14">
         <h2 className="text-lg font-medium">Team</h2>
         <ul className="mt-4 grid gap-3 md:grid-cols-2">
-          {TEAM.map((t) => (
-            <li key={t.name} className="flex items-center gap-3 rounded-md border border-border/60 p-3">
+          {team.map((t) => (
+            <li key={t.id} className="flex items-center gap-3 rounded-md border border-border/60 p-3">
               <div className="grid size-10 place-items-center rounded-full bg-muted text-xs font-medium">{t.initials}</div>
               <div>
                 <p className="text-sm font-medium">{t.name}</p>

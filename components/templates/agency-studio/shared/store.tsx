@@ -37,6 +37,7 @@ function Provider({ children }: { children: React.ReactNode }) {
   const services = useQuery(api.services.list, {});
   const leads = useQuery(api.leads.list, {});
   const articles = useQuery(api.articles.list, {});
+  const team = useQuery(api.team.list, {});
   const comments = useQuery(api.comments.list, {});
   const subscribers = useQuery(api.subscribers.list, {});
   const newsletters = useQuery(api.newsletters.list, {});
@@ -45,7 +46,7 @@ function Provider({ children }: { children: React.ReactNode }) {
   const landingRows = useQuery(api.landing.list, {});
 
   const queries = [
-    projects, clients, services, leads, articles, comments,
+    projects, clients, services, leads, articles, team, comments,
     subscribers, newsletters, aiConfigRow, pageRows, landingRows,
   ];
   const ready = queries.every((q) => q !== undefined);
@@ -58,6 +59,7 @@ function Provider({ children }: { children: React.ReactNode }) {
       services: withId(services),
       leads: withId(leads),
       articles: withId(articles),
+      team: withId(team),
       comments: withId(comments),
       subscribers: withId(subscribers),
       newsletters: withId(newsletters),
@@ -65,7 +67,7 @@ function Provider({ children }: { children: React.ReactNode }) {
       pages: (pageRows ?? []) as PageEntry[],
       landingSections: (landingRows ?? []) as LandingSection[],
     }),
-    [projects, clients, services, leads, articles, comments, subscribers, newsletters, aiConfigRow, pageRows, landingRows],
+    [projects, clients, services, leads, articles, team, comments, subscribers, newsletters, aiConfigRow, pageRows, landingRows],
   );
 
   const dispatch = useConvexDispatch(state);
@@ -146,6 +148,7 @@ export const useServices = () => useStore().state.services;
 export const useLeads = () => useStore().state.leads;
 export const useArticles = () => useStore().state.articles;
 export const useArticle = (slug: string) => useArticles().find((a) => a.slug === slug) ?? null;
+export const useTeam = () => useStore().state.team;
 export const useComments = () => useStore().state.comments;
 export const useSubscribers = () => useStore().state.subscribers;
 export const useNewsletters = () => useStore().state.newsletters;

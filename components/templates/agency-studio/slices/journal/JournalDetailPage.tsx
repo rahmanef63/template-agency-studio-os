@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SEED_ARTICLES } from "../../shared/journal-seed";
+import { useArticle, useArticles } from "../../shared/store";
 import { PUBLIC_BASE } from "../../shared/nav-config";
 import { CommentsSection } from "../../shared/comments-section";
 
@@ -28,7 +28,8 @@ function formatDate(ts: number) {
  * articles in the same category.
  */
 export function JournalDetailPage({ slug }: { slug: string }) {
-  const article = SEED_ARTICLES.find((a) => a.slug === slug);
+  const article = useArticle(slug);
+  const articles = useArticles();
 
   if (!article) {
     return (
@@ -43,7 +44,9 @@ export function JournalDetailPage({ slug }: { slug: string }) {
   }
 
   const paragraphs = article.body.split(/\n\n+/).filter(Boolean);
-  const related = SEED_ARTICLES.filter((a) => a.id !== article.id && a.category === article.category).slice(0, 3);
+  const related = articles
+    .filter((a) => a.id !== article.id && a.category === article.category && a.status !== "draft")
+    .slice(0, 3);
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">

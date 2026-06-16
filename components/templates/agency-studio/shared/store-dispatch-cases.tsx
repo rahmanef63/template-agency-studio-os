@@ -15,6 +15,7 @@ import type { Action, State } from "./types";
 export type ContentDeps = {
   knownIds: {
     articles: Set<string>;
+    team: Set<string>;
     comments: Set<string>;
     subscribers: Set<string>;
     newsletters: Set<string>;
@@ -23,7 +24,8 @@ export type ContentDeps = {
   fail: (e: unknown) => void;
   mArticleUpsert: ReactMutation<typeof api.articles.upsert>;
   mArticleRemove: ReactMutation<typeof api.articles.remove>;
-  mCommentUpsert: ReactMutation<typeof api.comments.upsert>;
+  mTeamUpsert: ReactMutation<typeof api.team.upsert>;
+  mTeamRemove: ReactMutation<typeof api.team.remove>;
   mCommentModerate: ReactMutation<typeof api.comments.moderate>;
   mCommentRemove: ReactMutation<typeof api.comments.remove>;
   mSubUpsert: ReactMutation<typeof api.subscribers.upsert>;
@@ -43,7 +45,8 @@ export function dispatchContentCases(action: Action, deps: ContentDeps): void {
   const {
     knownIds, pages, fail,
     mArticleUpsert, mArticleRemove,
-    mCommentUpsert, mCommentModerate, mCommentRemove,
+    mTeamUpsert, mTeamRemove,
+    mCommentModerate, mCommentRemove,
     mSubUpsert, mSubRemove,
     mNewsUpsert, mNewsSend, mNewsRemove,
     mAiUpdate, mAiReset,
@@ -62,19 +65,27 @@ export function dispatchContentCases(action: Action, deps: ContentDeps): void {
       void mArticleRemove({ id: action.id as Id<"agencyArticles"> }).catch(fail);
       break;
 
-    case "comment.upsert": {
-      const { id, ...d } = action.comment;
-      void (knownIds.comments.has(id)
-        ? mCommentUpsert({ id: id as Id<"agencyComments">, ...d })
-        : mCommentUpsert(d)
+    case "team.upsert": {
+      const { id, ...d } = action.member;
+      void (knownIds.team.has(id)
+        ? mTeamUpsert({ id: id as Id<"agencyTeam">, ...d })
+        : mTeamUpsert(d)
       ).catch(fail);
       break;
     }
+    case "team.delete":
+      void mTeamRemove({ id: action.id as Id<"agencyTeam"> }).catch(fail);
+      break;
+
+    // No admin "create comment" UI — moderators only approve/spam/delete the
+    // rows visitors posted via the public comments-section (comment_threads).
+    case "comment.upsert":
+      break;
     case "comment.moderate":
-      void mCommentModerate({ id: action.id as Id<"agencyComments">, status: action.status }).catch(fail);
+      void mCommentModerate({ id: action.id as Id<"comment_threads">, status: action.status }).catch(fail);
       break;
     case "comment.delete":
-      void mCommentRemove({ id: action.id as Id<"agencyComments"> }).catch(fail);
+      void mCommentRemove({ id: action.id as Id<"comment_threads"> }).catch(fail);
       break;
 
     case "subscriber.upsert": {
