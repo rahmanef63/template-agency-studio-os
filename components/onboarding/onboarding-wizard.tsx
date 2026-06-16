@@ -7,7 +7,7 @@
 // favicon stay editable in admin Settings.
 
 import * as React from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useConvex, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
   groupTweakcnPresets,
@@ -21,7 +21,9 @@ import {
 
 export function OnboardingWizard({ onDone }: { onDone: () => void }) {
   const upsert = useMutation(api.settings.upsert);
+  const convex = useConvex();
   const seedSample = useMutation(api.seed.seedSample);
+  const importAll = useMutation(api.backup.importAll);
   const status = useQuery(api.setup.status);
   const { registry, preview } = useThemePreset();
 
@@ -42,6 +44,8 @@ export function OnboardingWizard({ onDone }: { onDone: () => void }) {
       save={(fields) => upsert(fields)}
       seedSample={() => seedSample({})}
       seeded={status?.seeded}
+      exportJson={() => convex.query(api.backup.exportAll, {})}
+      importJson={(snapshot) => importAll({ snapshot })}
       presetOptions={presetOptions}
       defaultPresetLabel="Bawaan template"
       onPresetPreview={preview}
