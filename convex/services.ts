@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { requireUser } from "./_shared/auth";
 
 export const list = query({
   args: {},
@@ -24,6 +25,7 @@ export const upsert = mutation({
     featured: v.boolean(),
   },
   handler: async (ctx, { id, ...data }) => {
+    await requireUser(ctx);
     if (id) {
       await ctx.db.patch(id, data);
       return id;
@@ -35,6 +37,7 @@ export const upsert = mutation({
 export const remove = mutation({
   args: { id: v.id("agencyServices") },
   handler: async (ctx, { id }) => {
+    await requireUser(ctx);
     await ctx.db.delete(id);
   },
 });

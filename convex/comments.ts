@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { requireUser } from "./_shared/auth";
 
 const STATUS = v.union(v.literal("pending"), v.literal("approved"), v.literal("spam"));
 const AIFLAG = v.optional(v.union(v.literal("spam"), v.literal("toxic"), v.null()));
@@ -22,6 +23,7 @@ export const upsert = mutation({
     ts: v.number(),
   },
   handler: async (ctx, { id, ...data }) => {
+    await requireUser(ctx);
     if (id) {
       await ctx.db.patch(id, data);
       return id;
@@ -33,6 +35,7 @@ export const upsert = mutation({
 export const moderate = mutation({
   args: { id: v.id("agencyComments"), status: STATUS },
   handler: async (ctx, { id, status }) => {
+    await requireUser(ctx);
     await ctx.db.patch(id, { status });
   },
 });
@@ -40,6 +43,7 @@ export const moderate = mutation({
 export const remove = mutation({
   args: { id: v.id("agencyComments") },
   handler: async (ctx, { id }) => {
+    await requireUser(ctx);
     await ctx.db.delete(id);
   },
 });

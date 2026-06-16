@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { requireUser } from "./_shared/auth";
 
 const STATUS = v.union(
   v.literal("new"),
@@ -46,6 +47,7 @@ export const update = mutation({
     budget: v.optional(v.string()),
   },
   handler: async (ctx, { id, ...patch }) => {
+    await requireUser(ctx);
     const clean: Record<string, unknown> = {};
     for (const [k, val] of Object.entries(patch)) if (val !== undefined) clean[k] = val;
     await ctx.db.patch(id, clean);
@@ -55,6 +57,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("agencyLeads") },
   handler: async (ctx, { id }) => {
+    await requireUser(ctx);
     await ctx.db.delete(id);
   },
 });

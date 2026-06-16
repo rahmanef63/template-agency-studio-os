@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { requireUser } from "./_shared/auth";
 
 // Singleton AI assistant config. Defaults mirror shared/ai-config-seed.ts.
 const DEFAULTS = {
@@ -33,6 +34,7 @@ const FIELDS = {
 export const update = mutation({
   args: FIELDS,
   handler: async (ctx, args) => {
+    await requireUser(ctx);
     const patch: Record<string, unknown> = {};
     for (const [k, val] of Object.entries(args)) if (val !== undefined) patch[k] = val;
     const existing = await ctx.db.query("agencyAiConfig").first();
@@ -47,6 +49,7 @@ export const update = mutation({
 export const reset = mutation({
   args: {},
   handler: async (ctx) => {
+    await requireUser(ctx);
     const existing = await ctx.db.query("agencyAiConfig").first();
     if (existing) {
       await ctx.db.patch(existing._id, { ...DEFAULTS });
