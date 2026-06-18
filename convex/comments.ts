@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireUser } from "./_shared/auth";
+import { optionalUser, requireUser } from "./_shared/auth";
 
 // Admin moderation backend for comments.
 //
@@ -17,6 +17,7 @@ const STATUS = v.union(v.literal("pending"), v.literal("approved"), v.literal("s
 export const list = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await optionalUser(ctx))) return [];
     const rows = await ctx.db.query("comment_threads").order("desc").take(500);
     return rows
       .filter((r) => !r.deletedAt)

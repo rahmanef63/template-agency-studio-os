@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireUser } from "./_shared/auth";
+import { optionalUser, requireUser } from "./_shared/auth";
 
 const STATUS = v.union(
   v.literal("new"),
@@ -13,6 +13,7 @@ const STATUS = v.union(
 export const list = query({
   args: { status: v.optional(v.string()) },
   handler: async (ctx, { status }) => {
+    if (!(await optionalUser(ctx))) return [];
     if (status) {
       return ctx.db
         .query("agencyLeads")
