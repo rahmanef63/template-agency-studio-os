@@ -7,8 +7,18 @@ const STATUS = v.union(v.literal("active"), v.literal("prospect"), v.literal("al
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    if (!(await optionalUser(ctx))) return [];
-    return ctx.db.query("agencyClients").take(200);
+    const rows = await ctx.db.query("agencyClients").take(200);
+    if (await optionalUser(ctx)) return rows;
+    // Public landing renders the active-client count + client names. Expose
+    // name/industry/status to anon; strip private fields (email/contact/notes).
+    // (Cycle 1's blanket [] zeroed the public "clients" stat — this restores it.)
+    return rows.map((c) => ({
+      _id: c._id,
+      _creationTime: c._creationTime,
+      name: c.name,
+      industry: c.industry,
+      status: c.status,
+    }));
   },
 });
 
