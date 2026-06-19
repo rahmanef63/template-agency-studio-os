@@ -37,7 +37,19 @@ export type FieldDef<T> =
    *  CrudController's sibling items: 1..N (for existing row) or 1..N+1
    *  (for new row). Prevents manual conflicts. CrudFieldInput needs the
    *  `siblings` context which CrudRowDialog / CrudFormView thread through. */
-  | { kind: "position"; key: keyof T & string; label: string; hint?: string; wide?: boolean };
+  | { kind: "position"; key: keyof T & string; label: string; hint?: string; wide?: boolean }
+  | {
+      kind: "custom";
+      key: keyof T & string;
+      label: string;
+      hint?: string;
+      wide?: boolean;
+      render: (
+        value: unknown,
+        onChange: (v: unknown) => void,
+        ctx?: { total: number; editing: boolean; row?: Record<string, unknown> },
+      ) => React.ReactNode;
+    };
 
 /** Adapter the template wires from its store dispatch. Generic CRUD
  *  components consume this — no direct store coupling.
