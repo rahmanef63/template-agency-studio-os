@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { PortfolioDetailPage } from "@/components/templates/agency-studio/slices/portfolio/PortfolioDetailPage";
-import { SEED_PROJECTS } from "@/components/templates/agency-studio/shared/seed";
+import { PortfolioDetailPage } from "@/features/portfolio/PortfolioDetailPage";
+import { SEED_PROJECTS } from "@/features/_app/seed";
 
 export async function generateMetadata({
   params,

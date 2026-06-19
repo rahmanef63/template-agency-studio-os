@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { SEED_PROJECTS } from "@/components/templates/agency-studio/shared/seed";
-import { SEED_ARTICLES } from "@/components/templates/agency-studio/shared/journal-seed";
-import { DEFAULT_SITE_CONFIG, TEMPLATE_SLUG } from "@/components/templates/agency-studio/shared/site-config";
-import { buildTemplatePaths } from "@/components/templates/_shared/config/template-paths";
+import { SEED_PROJECTS } from "@/features/_app/seed";
+import { SEED_ARTICLES } from "@/features/_app/journal-seed";
+import { DEFAULT_SITE_CONFIG, TEMPLATE_SLUG } from "@/features/_app/site-config";
+import { buildTemplatePaths } from "@/features/_shared/config/template-paths";
 
 const PUBLIC_BASE = buildTemplatePaths(TEMPLATE_SLUG).publicBase;
 

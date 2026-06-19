@@ -3,15 +3,15 @@
 import type { ReactNode } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { DashboardShell } from "@/components/templates/_shared/ui/dashboard-shell";
-import { useStore } from "@/components/templates/agency-studio/shared/store";
-import { DEFAULT_SITE_CONFIG } from "@/components/templates/agency-studio/shared/site-config";
+import { DashboardShell } from "@/features/_shared/ui/dashboard-shell";
+import { useStore } from "@/features/_app/store";
+import { DEFAULT_SITE_CONFIG } from "@/features/_app/site-config";
 import {
   ADMIN_PANEL_BASE,
   ADMIN_SETTINGS_NAV,
   OWNER_USER,
   buildAdminNav,
-} from "@/components/templates/agency-studio/shared/nav-config";
+} from "@/features/_app/nav-config";
 
 export function DashboardShellClient({ children }: { children: ReactNode }) {
   const { state } = useStore();

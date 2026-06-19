@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TeamPage } from "@/components/templates/agency-studio/slices/team/TeamPage";
+import { TeamPage } from "@/features/team/TeamPage";
 
 export const metadata: Metadata = {
   title: "Team",

@@ -1,4 +1,4 @@
-import { ProjectEditor } from "@/components/templates/agency-studio/slices/admin/projects/ProjectEditor";
+import { ProjectEditor } from "@/features/admin/projects/ProjectEditor";
 export default function Page() {
   return <ProjectEditor id={null} />;
 }

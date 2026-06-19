@@ -1,4 +1,4 @@
-import { NewsletterView } from "@/components/templates/agency-studio/slices/admin/newsletter/NewsletterView";
+import { NewsletterView } from "@/features/admin/newsletter/NewsletterView";
 export default function Page() {
   return <NewsletterView />;
 }

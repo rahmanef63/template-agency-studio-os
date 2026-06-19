@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ProcessPage } from "@/components/templates/agency-studio/slices/process/ProcessPage";
+import { ProcessPage } from "@/features/process/ProcessPage";
 
 export const metadata: Metadata = {
   title: "Process",

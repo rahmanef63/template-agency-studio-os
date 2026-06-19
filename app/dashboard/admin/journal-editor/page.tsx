@@ -1,4 +1,4 @@
-import { JournalsAdminView } from "@/components/templates/agency-studio/slices/admin/journal-editor/JournalsAdminView";
+import { JournalsAdminView } from "@/features/admin/journal-editor/JournalsAdminView";
 export default function Page() {
   return <JournalsAdminView />;
 }

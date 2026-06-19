@@ -2,19 +2,19 @@ import type { Metadata } from "next";
 import { DemoRibbon } from "@/components/demo-ribbon";
 import { AiChatFab } from "@/components/ai-chat-fab";
 import { Suspense, type ReactNode } from "react";
-import { SiteShell } from "@/components/templates/_shared/ui/site-shell";
+import { SiteShell } from "@/features/_shared/ui/site-shell";
 import { PublicChrome } from "@/components/public-chrome";
 import { ThemePresetSwitcher } from "@/features/theme-presets";
-import { StoreProvider } from "@/components/templates/agency-studio/shared/store";
+import { StoreProvider } from "@/features/_app/store";
 import { SiteLoader } from "@/components/site-loader";
-import { DEFAULT_SITE_CONFIG } from "@/components/templates/agency-studio/shared/site-config";
+import { DEFAULT_SITE_CONFIG } from "@/features/_app/site-config";
 import {
   FOOTER_COLUMNS,
   FOOTER_TAGLINE,
   PUBLIC_BASE,
   PUBLIC_CTA,
   PUBLIC_NAV,
-} from "@/components/templates/agency-studio/shared/nav-config";
+} from "@/features/_app/nav-config";
 
 const c = DEFAULT_SITE_CONFIG;
 

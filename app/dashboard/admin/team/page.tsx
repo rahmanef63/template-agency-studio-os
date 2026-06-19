@@ -1,4 +1,4 @@
-import { TeamView } from "@/components/templates/agency-studio/slices/admin/team/TeamView";
+import { TeamView } from "@/features/admin/team/TeamView";
 export default function Page() {
   return <TeamView />;
 }

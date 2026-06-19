@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ContactPage } from "@/components/templates/agency-studio/slices/contact/ContactPage";
+import { ContactPage } from "@/features/contact/ContactPage";
 
 export const metadata: Metadata = { title: "Contact", description: "Send a brief — usually replies within 24h." };
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { JournalDetailPage } from "@/components/templates/agency-studio/slices/journal/JournalDetailPage";
-import { SEED_ARTICLES } from "@/components/templates/agency-studio/shared/journal-seed";
+import { JournalDetailPage } from "@/features/journal/JournalDetailPage";
+import { SEED_ARTICLES } from "@/features/_app/journal-seed";
 
 export async function generateMetadata({
   params,

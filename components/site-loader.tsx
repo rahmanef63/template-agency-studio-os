@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useStore } from "@/components/templates/agency-studio/shared/store";
+import { useStore } from "@/features/_app/store";
 
 /**
  * Full-screen splash shown until the public site's Convex data is 100% loaded,
