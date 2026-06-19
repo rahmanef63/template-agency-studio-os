@@ -17,6 +17,8 @@ const FIELDS = {
   tagline: v.optional(v.string()),
   ownerName: v.optional(v.string()),
   contactEmail: v.optional(v.string()),
+  contactPhone: v.optional(v.string()),
+  contactAddress: v.optional(v.string()),
   brandColor: v.optional(v.string()),
   themeDefault: v.optional(v.string()),
   themePreset: v.optional(v.string()),

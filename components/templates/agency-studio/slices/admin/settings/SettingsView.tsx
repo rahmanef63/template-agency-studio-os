@@ -44,6 +44,8 @@ export function SettingsView() {
         </CardContent>
       </Card>
 
+      <ContactInfoForm />
+
       <SocialLinksForm />
 
       <AboutPageForm />
@@ -66,6 +68,73 @@ export function SettingsView() {
         <BackupCard />
       </div>
     </div>
+  );
+}
+
+/** Editable contact info — phone/WhatsApp + address on the Convex
+ *  `siteSettings` singleton (same row the wizard / public Contact page read).
+ *  Empty fields stay undefined so the Contact page falls back to its defaults.
+ *  Mirrors the personal-brand-os reference. Form submit logic is untouched. */
+function ContactInfoForm() {
+  const settings = useQuery(api.settings.get);
+  const upsert = useMutation(api.settings.upsert);
+  const [contactEmail, setContactEmail] = React.useState("");
+  const [contactPhone, setContactPhone] = React.useState("");
+  const [contactAddress, setContactAddress] = React.useState("");
+  const [hydrated, setHydrated] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+
+  React.useEffect(() => {
+    if (settings === undefined || hydrated) return;
+    setContactEmail(settings?.contactEmail ?? "");
+    setContactPhone(settings?.contactPhone ?? "");
+    setContactAddress(settings?.contactAddress ?? "");
+    setHydrated(true);
+  }, [settings, hydrated]);
+
+  async function save() {
+    setBusy(true);
+    try {
+      await upsert({
+        contactEmail: contactEmail || undefined,
+        contactPhone: contactPhone || undefined,
+        contactAddress: contactAddress || undefined,
+      });
+      toast.success("Kontak tersimpan.");
+    } catch {
+      toast.error("Gagal menyimpan.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card className="border-border/60">
+      <CardContent className="space-y-4 p-6">
+        <div>
+          <p className="font-medium text-foreground">Contact info</p>
+          <p className="text-sm text-muted-foreground">
+            Email, telepon/WhatsApp, dan alamat yang tampil di halaman Contact publik.
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Email kontak">
+            <Input type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="halo@atelier.studio" />
+          </Field>
+          <Field label="Telepon / WhatsApp">
+            <Input value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="+62 812 3456 7890" />
+          </Field>
+          <Field label="Alamat">
+            <Input value={contactAddress} onChange={(e) => setContactAddress(e.target.value)} placeholder="Jakarta, Indonesia" />
+          </Field>
+        </div>
+        <div className="flex justify-end">
+          <Button onClick={save} disabled={busy || settings === undefined}>
+            {busy ? <Loader2 className="size-4 animate-spin" /> : "Simpan"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

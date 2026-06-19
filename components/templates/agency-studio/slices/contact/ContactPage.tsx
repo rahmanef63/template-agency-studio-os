@@ -1,6 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useQuery } from "convex/react";
+import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +16,10 @@ import { SectionHead } from "@/components/templates/_shared/ui/section-head";
 
 export function ContactPage() {
   const c = DEFAULT_SITE_CONFIG;
+  const s = useQuery(api.settings.get);
+  const contactEmail = s?.contactEmail || c.email;
+  const contactPhone = s?.contactPhone || "+62 812 3456 7890";
+  const contactAddress = s?.contactAddress || "Jakarta, Indonesia";
   const { dispatch } = useStore();
   const [submitting, setSubmitting] = React.useState(false);
 
@@ -41,7 +48,19 @@ export function ContactPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <SectionHead eyebrow="Contact" title="Send a brief" subtitle={`Email us directly at ${c.email} or fill the form below.`} />
+      <SectionHead eyebrow="Contact" title="Send a brief" subtitle={`Email us directly at ${contactEmail} or fill the form below.`} />
+      <div className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
+        <p className="flex items-center gap-2">
+          <Mail className="size-4 shrink-0" />
+          <a href={`mailto:${contactEmail}`} className="hover:text-foreground">{contactEmail}</a>
+        </p>
+        <p className="flex items-center gap-2">
+          <MessageCircle className="size-4 shrink-0" /> {contactPhone} (WA)
+        </p>
+        <p className="flex items-center gap-2">
+          <MapPin className="size-4 shrink-0" /> {contactAddress}
+        </p>
+      </div>
       <Card className="mt-10 border-border/60">
         <CardContent className="p-6">
           <form onSubmit={onSubmit} className="grid gap-4 md:grid-cols-2">
