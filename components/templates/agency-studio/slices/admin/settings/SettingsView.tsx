@@ -5,7 +5,6 @@ import { useMutation, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,8 +18,6 @@ import { parseSocials } from "@/components/templates/_shared/ui/site-footer";
 import { DEFAULT_SITE_CONFIG } from "../../../shared/site-config";
 
 export function SettingsView() {
-  const c = DEFAULT_SITE_CONFIG;
-  const settings = useQuery(api.settings.get);
   return (
     <div className="space-y-4">
       <div>
@@ -30,19 +27,7 @@ export function SettingsView() {
           template ada di components/templates/agency-studio/shared/site-config.ts.
         </p>
       </div>
-      <Card className="border-border/60">
-        <CardContent className="space-y-3 p-6 text-sm">
-          <Row k="Studio name" v={settings?.siteName || c.studioName} />
-          <Row k="Brand" v={settings?.siteName || c.brandName} />
-          <Row k="Tagline" v={settings?.tagline || c.tagline} />
-          <Row k="Owner" v={settings?.ownerName || c.studioName} />
-          <Row k="Email" v={settings?.contactEmail || c.email} mono />
-          <Row k="Domain" v={c.baseUrl} mono />
-          <Row k="Twitter" v={c.twitter} mono />
-          <Row k="Locale" v={c.defaultLocale} />
-          <Row k="Brand color" v={settings?.brandColor || c.themeColor} mono />
-        </CardContent>
-      </Card>
+      <BrandIdentityForm />
 
       <ContactInfoForm />
 
@@ -314,11 +299,112 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function Row({ k, v, mono }: { k: string; v: string; mono?: boolean }) {
+/** Editable brand identity — studio name / tagline / owner / brand color / logo
+ *  on the Convex `siteSettings` singleton (the same row the public chrome reads).
+ *  Replaces the old read-only display so brand + logo are editable post-onboarding. */
+function BrandIdentityForm() {
+  const c = DEFAULT_SITE_CONFIG;
+  const settings = useQuery(api.settings.get);
+  const upsert = useMutation(api.settings.upsert);
+  const genUploadUrl = useMutation(api.files.generateUploadUrl);
+  const getFileUrl = useMutation(api.files.getUrl);
+  const [siteName, setSiteName] = React.useState("");
+  const [tagline, setTagline] = React.useState("");
+  const [ownerName, setOwnerName] = React.useState("");
+  const [brandColor, setBrandColor] = React.useState("");
+  const [logoUrl, setLogoUrl] = React.useState("");
+  const [hydrated, setHydrated] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+
+  React.useEffect(() => {
+    if (settings === undefined || hydrated) return;
+    setSiteName(settings?.siteName ?? "");
+    setTagline(settings?.tagline ?? "");
+    setOwnerName(settings?.ownerName ?? "");
+    setBrandColor(settings?.brandColor ?? "");
+    setLogoUrl(settings?.logoUrl ?? "");
+    setHydrated(true);
+  }, [settings, hydrated]);
+
+  const onUpload = async (file: File): Promise<string> => {
+    const uploadUrl = await genUploadUrl();
+    const res = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": file.type }, body: file });
+    const { storageId } = (await res.json()) as { storageId: string };
+    return ((await getFileUrl({ storageId: storageId as never })) as string) ?? "";
+  };
+
+  async function save() {
+    setBusy(true);
+    try {
+      await upsert({
+        siteName: siteName || undefined,
+        tagline: tagline || undefined,
+        ownerName: ownerName || undefined,
+        brandColor: brandColor || undefined,
+        logoUrl: logoUrl || undefined,
+      });
+      toast.success("Brand tersimpan.");
+    } catch {
+      toast.error("Gagal menyimpan.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{k}</span>
-      {mono ? <span className="font-mono">{v}</span> : <Badge variant="outline">{v}</Badge>}
-    </div>
+    <Card className="border-border/60">
+      <CardContent className="space-y-4 p-6">
+        <div>
+          <p className="font-medium text-foreground">Brand identity</p>
+          <p className="text-sm text-muted-foreground">
+            Nama studio, tagline, owner, warna brand, dan logo. Tampil di header/footer situs publik.
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Studio / brand name">
+            <Input value={siteName} onChange={(e) => setSiteName(e.target.value)} placeholder={c.studioName} />
+          </Field>
+          <Field label="Tagline">
+            <Input value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder={c.tagline} />
+          </Field>
+          <Field label="Owner">
+            <Input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder={c.studioName} />
+          </Field>
+          <Field label="Brand color">
+            <div className="flex items-center gap-2">
+              <Input type="color" value={brandColor || c.themeColor} onChange={(e) => setBrandColor(e.target.value)} className="h-10 w-14 p-1" />
+              <Input value={brandColor} onChange={(e) => setBrandColor(e.target.value)} placeholder={c.themeColor} />
+            </div>
+          </Field>
+        </div>
+        <Field label="Logo">
+          <div className="flex items-center gap-3">
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="Logo" className="h-9 w-auto rounded-md border border-border/60 object-contain" />
+            ) : (
+              <span className="text-xs text-muted-foreground">Belum ada logo — header pakai wordmark.</span>
+            )}
+            <ImagePickerButton
+              label={logoUrl ? "Ganti logo" : "Upload logo"}
+              title="Logo"
+              onUpload={onUpload}
+              searchUnsplash={undefined}
+              onChange={(img) => setLogoUrl(imageRef(img) ?? "")}
+            />
+            {logoUrl && (
+              <Button type="button" variant="ghost" size="sm" onClick={() => setLogoUrl("")}>
+                Hapus
+              </Button>
+            )}
+          </div>
+        </Field>
+        <div className="flex justify-end">
+          <Button onClick={save} disabled={busy || settings === undefined}>
+            {busy ? <Loader2 className="size-4 animate-spin" /> : "Simpan"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
