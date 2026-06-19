@@ -182,6 +182,8 @@ export default defineSchema({
     faviconUrl: v.optional(v.string()),
     socials: v.optional(v.string()),
     seoDescription: v.optional(v.string()),
+    aboutHeadline: v.optional(v.string()),
+    aboutImageUrl: v.optional(v.string()),
     analyticsId: v.optional(v.string()),
     onboardedAt: v.optional(v.number()),
   }),

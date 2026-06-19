@@ -9,10 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { UpdateCard } from "@/components/admin/update-card";
 import { BackupCard } from "@/components/admin/backup-card";
 import { ThemePresetSwitcher } from "@/features/theme-presets";
+import { ImagePickerButton, imageRef } from "@/features/image-picker";
 import { parseSocials } from "@/components/templates/_shared/ui/site-footer";
 import { DEFAULT_SITE_CONFIG } from "../../../shared/site-config";
 
@@ -43,6 +45,8 @@ export function SettingsView() {
       </Card>
 
       <SocialLinksForm />
+
+      <AboutPageForm />
 
       <Card className="border-border/60">
         <CardContent className="flex items-center justify-between gap-4 p-6 text-sm">
@@ -130,6 +134,98 @@ function SocialLinksForm() {
             <Input value={socialYoutube} onChange={(e) => setSocialYoutube(e.target.value)} placeholder="https://youtube.com/@username" />
           </Field>
         </div>
+        <div className="flex justify-end">
+          <Button onClick={save} disabled={busy || settings === undefined}>
+            {busy ? <Loader2 className="size-4 animate-spin" /> : "Simpan"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Editable About page — headline + bio + photo on the Convex `siteSettings`
+ *  singleton. The public About page reads these (with the hardcoded strings as
+ *  fallback). The structured lists (values / team) stay hardcoded. */
+function AboutPageForm() {
+  const settings = useQuery(api.settings.get);
+  const upsert = useMutation(api.settings.upsert);
+  const genUploadUrl = useMutation(api.files.generateUploadUrl);
+  const getFileUrl = useMutation(api.files.getUrl);
+  const [aboutHeadline, setAboutHeadline] = React.useState("");
+  const [aboutBody, setAboutBody] = React.useState("");
+  const [aboutImageUrl, setAboutImageUrl] = React.useState("");
+  const [hydrated, setHydrated] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+
+  React.useEffect(() => {
+    if (settings === undefined || hydrated) return;
+    setAboutHeadline(settings?.aboutHeadline ?? "");
+    setAboutBody(settings?.seoDescription ?? "");
+    setAboutImageUrl(settings?.aboutImageUrl ?? "");
+    setHydrated(true);
+  }, [settings, hydrated]);
+
+  const onUpload = async (file: File): Promise<string> => {
+    const uploadUrl = await genUploadUrl();
+    const res = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": file.type }, body: file });
+    const { storageId } = (await res.json()) as { storageId: string };
+    return ((await getFileUrl({ storageId: storageId as never })) as string) ?? "";
+  };
+
+  async function save() {
+    setBusy(true);
+    try {
+      await upsert({
+        aboutHeadline: aboutHeadline || undefined,
+        seoDescription: aboutBody || undefined,
+        aboutImageUrl: aboutImageUrl || undefined,
+      });
+      toast.success("About page tersimpan.");
+    } catch {
+      toast.error("Gagal menyimpan.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card className="border-border/60">
+      <CardContent className="space-y-4 p-6">
+        <div>
+          <p className="font-medium text-foreground">About page</p>
+          <p className="text-sm text-muted-foreground">
+            Headline, bio, dan foto di halaman About. Kosongkan untuk pakai teks default template.
+          </p>
+        </div>
+        <Field label="Judul / headline">
+          <Input value={aboutHeadline} onChange={(e) => setAboutHeadline(e.target.value)} placeholder="Atelier Studio — founded 2019" />
+        </Field>
+        <Field label="Bio / intro">
+          <Textarea value={aboutBody} onChange={(e) => setAboutBody(e.target.value)} rows={3} placeholder="Ceritakan tentang studio…" />
+        </Field>
+        <Field label="Foto">
+          <div className="flex items-center gap-3">
+            {aboutImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={aboutImageUrl} alt="About" className="size-16 rounded-lg border border-border/60 object-cover" />
+            ) : (
+              <span className="text-xs text-muted-foreground">Belum ada foto.</span>
+            )}
+            <ImagePickerButton
+              label={aboutImageUrl ? "Ganti foto" : "Upload foto"}
+              title="Foto About"
+              onUpload={onUpload}
+              searchUnsplash={undefined}
+              onChange={(img) => setAboutImageUrl(imageRef(img) ?? "")}
+            />
+            {aboutImageUrl && (
+              <Button type="button" variant="ghost" size="sm" onClick={() => setAboutImageUrl("")}>
+                Hapus
+              </Button>
+            )}
+          </div>
+        </Field>
         <div className="flex justify-end">
           <Button onClick={save} disabled={busy || settings === undefined}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : "Simpan"}

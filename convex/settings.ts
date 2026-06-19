@@ -24,6 +24,8 @@ const FIELDS = {
   faviconUrl: v.optional(v.string()),
   socials: v.optional(v.string()),
   seoDescription: v.optional(v.string()),
+  aboutHeadline: v.optional(v.string()),
+  aboutImageUrl: v.optional(v.string()),
   analyticsId: v.optional(v.string()),
   // set true on the final wizard step so the wizard never shows again
   markOnboarded: v.optional(v.boolean()),

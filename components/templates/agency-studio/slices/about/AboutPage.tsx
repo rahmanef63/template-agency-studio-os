@@ -1,5 +1,7 @@
 "use client";
 
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { DEFAULT_SITE_CONFIG } from "../../shared/site-config";
 import { SectionHead } from "@/components/templates/_shared/ui/section-head";
@@ -15,12 +17,26 @@ const VALUES = [
 export function AboutPage() {
   const c = DEFAULT_SITE_CONFIG;
   const team = useTeam();
+  const settings = useQuery(api.settings.get);
+  const DEFAULT_HEADLINE = `${c.studioName} — founded ${c.studioFounded}`;
+  const DEFAULT_INTRO = c.description;
+  const headline = settings?.aboutHeadline || DEFAULT_HEADLINE;
+  const intro = settings?.seoDescription || DEFAULT_INTRO;
+  const photo = settings?.aboutImageUrl;
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
+      {photo && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={photo}
+          alt={headline}
+          className="mb-6 h-40 w-40 rounded-2xl border border-border/60 object-cover"
+        />
+      )}
       <SectionHead
         eyebrow="About"
-        title={`${c.studioName} — founded ${c.studioFounded}`}
-        subtitle={c.description}
+        title={headline}
+        subtitle={intro}
       />
       <section className="mt-12 grid gap-4 md:grid-cols-3">
         <Stagger itemClassName="h-full">
