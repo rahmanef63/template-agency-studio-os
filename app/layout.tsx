@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Inter } from "next/font/google";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 import { ConvexClientProvider } from "@/components/convex-provider";
 import { ThemeProviders } from "@/components/theme-providers";
 import { Toaster } from "sonner";
@@ -8,28 +10,39 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
-  ),
-  title: { default: "Agency Studio OS", template: "%s — Agency Studio OS" },
-  description:
-    "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.",
-  openGraph: {
-    title: "Agency Studio OS",
-    description:
-      "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.",
-    type: "website",
-    siteName: "Agency Studio OS",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Agency Studio OS",
-    description:
-      "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.",
-  },
-};
+const DEFAULT_NAME = "Agency Studio OS";
+const DEFAULT_DESC =
+  "Website OS for agencies & creative studios — leads + clients, projects + work showcase, services + journal. Free website template, clone-to-own.";
+
+// SEO/OG <head> driven by the owner's Convex settings (server-side, so social
+// scrapers + crawlers that don't run JS see the real brand).
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await fetchQuery(api.settings.get, {}).catch(() => null);
+  const name = s?.siteName || DEFAULT_NAME;
+  const description = s?.seoDescription || DEFAULT_DESC;
+  const image = s?.logoUrl || undefined;
+  return {
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_SITE_URL ??
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+    ),
+    title: { default: name, template: `%s — ${name}` },
+    description,
+    openGraph: {
+      title: name,
+      description,
+      type: "website",
+      siteName: name,
+      ...(image ? { images: [image] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
+      ...(image ? { images: [image] } : {}),
+    },
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
