@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { useMutation } from "convex/react";
+import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { IS_DEMO } from "@/lib/stage";
 import type { Action, State } from "./types";
 import { dispatchContentCases } from "./store-dispatch-cases";
 
@@ -61,6 +63,13 @@ export function useConvexDispatch(state: State): (a: Action) => void {
 
   return React.useCallback(
     (action: Action) => {
+      // PUBLIC-demo isolation: never write to the shared Convex DB from the
+      // showcase (NEXT_PUBLIC_DEMO=1). Reads (useQuery) keep showing seed
+      // content; only writes are blocked. No-op on real clones / owner deploy.
+      if (IS_DEMO) {
+        toast.info("Mode demo — clone template untuk menyimpan perubahan");
+        return;
+      }
       const fail = (e: unknown) => console.error(`[store] ${action.type} failed`, e);
       switch (action.type) {
         case "project.upsert": {
