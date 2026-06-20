@@ -9,6 +9,12 @@
  */
 
 import type * as _shared_auth from "../_shared/auth.js";
+import type * as adminPanel_aiConfig from "../adminPanel_aiConfig.js";
+import type * as adminPanel_analytics from "../adminPanel_analytics.js";
+import type * as adminPanel_auditLog from "../adminPanel_auditLog.js";
+import type * as adminPanel_settings from "../adminPanel_settings.js";
+import type * as adminPanel_users from "../adminPanel_users.js";
+import type * as adminPanel_webhooks from "../adminPanel_webhooks.js";
 import type * as aiConfig from "../aiConfig.js";
 import type * as articles from "../articles.js";
 import type * as auth from "../auth.js";
@@ -48,6 +54,12 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   "_shared/auth": typeof _shared_auth;
+  adminPanel_aiConfig: typeof adminPanel_aiConfig;
+  adminPanel_analytics: typeof adminPanel_analytics;
+  adminPanel_auditLog: typeof adminPanel_auditLog;
+  adminPanel_settings: typeof adminPanel_settings;
+  adminPanel_users: typeof adminPanel_users;
+  adminPanel_webhooks: typeof adminPanel_webhooks;
   aiConfig: typeof aiConfig;
   articles: typeof articles;
   auth: typeof auth;
