@@ -16,6 +16,7 @@ export type ContentDeps = {
   knownIds: {
     articles: Set<string>;
     team: Set<string>;
+    processSteps: Set<string>;
     comments: Set<string>;
     subscribers: Set<string>;
     newsletters: Set<string>;
@@ -26,6 +27,8 @@ export type ContentDeps = {
   mArticleRemove: ReactMutation<typeof api.articles.remove>;
   mTeamUpsert: ReactMutation<typeof api.team.upsert>;
   mTeamRemove: ReactMutation<typeof api.team.remove>;
+  mProcessUpsert: ReactMutation<typeof api.processSteps.upsert>;
+  mProcessRemove: ReactMutation<typeof api.processSteps.remove>;
   mCommentModerate: ReactMutation<typeof api.comments.moderate>;
   mCommentRemove: ReactMutation<typeof api.comments.remove>;
   mSubUpsert: ReactMutation<typeof api.subscribers.upsert>;
@@ -46,6 +49,7 @@ export function dispatchContentCases(action: Action, deps: ContentDeps): void {
     knownIds, pages, fail,
     mArticleUpsert, mArticleRemove,
     mTeamUpsert, mTeamRemove,
+    mProcessUpsert, mProcessRemove,
     mCommentModerate, mCommentRemove,
     mSubUpsert, mSubRemove,
     mNewsUpsert, mNewsSend, mNewsRemove,
@@ -75,6 +79,18 @@ export function dispatchContentCases(action: Action, deps: ContentDeps): void {
     }
     case "team.delete":
       void mTeamRemove({ id: action.id as Id<"agencyTeam"> }).catch(fail);
+      break;
+
+    case "process.upsert": {
+      const { id, ...d } = action.step;
+      void (knownIds.processSteps.has(id)
+        ? mProcessUpsert({ id: id as Id<"agencyProcessSteps">, ...d })
+        : mProcessUpsert(d)
+      ).catch(fail);
+      break;
+    }
+    case "process.delete":
+      void mProcessRemove({ id: action.id as Id<"agencyProcessSteps"> }).catch(fail);
       break;
 
     // No admin "create comment" UI — moderators only approve/spam/delete the

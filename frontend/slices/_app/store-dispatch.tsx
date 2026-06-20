@@ -28,6 +28,8 @@ export function useConvexDispatch(state: State): (a: Action) => void {
   const mArticleRemove = useMutation(api.articles.remove);
   const mTeamUpsert = useMutation(api.team.upsert);
   const mTeamRemove = useMutation(api.team.remove);
+  const mProcessUpsert = useMutation(api.processSteps.upsert);
+  const mProcessRemove = useMutation(api.processSteps.remove);
   const mCommentModerate = useMutation(api.comments.moderate);
   const mCommentRemove = useMutation(api.comments.remove);
   const mSubUpsert = useMutation(api.subscribers.upsert);
@@ -49,6 +51,7 @@ export function useConvexDispatch(state: State): (a: Action) => void {
       services: new Set(state.services.map((s) => s.id)),
       articles: new Set(state.articles.map((a) => a.id)),
       team: new Set(state.team.map((t) => t.id)),
+      processSteps: new Set(state.processSteps.map((p) => p.id)),
       comments: new Set(state.comments.map((c) => c.id)),
       subscribers: new Set(state.subscribers.map((s) => s.id)),
       newsletters: new Set(state.newsletters.map((n) => n.id)),
@@ -118,6 +121,7 @@ export function useConvexDispatch(state: State): (a: Action) => void {
             knownIds, pages: state.pages, fail,
             mArticleUpsert, mArticleRemove,
             mTeamUpsert, mTeamRemove,
+            mProcessUpsert, mProcessRemove,
             mCommentModerate, mCommentRemove,
             mSubUpsert, mSubRemove,
             mNewsUpsert, mNewsSend, mNewsRemove,

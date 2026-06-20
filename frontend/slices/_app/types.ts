@@ -94,6 +94,8 @@ export type ProcessStep = {
   blurb: string;
   duration: string;
   deliverables: string[];
+  /** Sort key for the public stepper + admin reorder arrows. */
+  order: number;
 };
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "won" | "lost";
@@ -178,6 +180,8 @@ export type State = {
   aiConfig: AiConfig;
   /** Studio team members — public Team/About pages + admin editor. */
   team: TeamMember[];
+  /** Engagement process steps — public /process stepper + admin editor. */
+  processSteps: ProcessStep[];
   /** O-wave: public pages CRUD slice. */
   pages: import("@/features/_shared/pages/types").PageEntry[];
   /** AB-wave: home-page section composition. Ordered + toggleable. */
@@ -214,5 +218,7 @@ export type Action =
   | { type: "ai-config.reset" }
   | { type: "team.upsert"; member: TeamMember }
   | { type: "team.delete"; id: string }
+  | { type: "process.upsert"; step: ProcessStep }
+  | { type: "process.delete"; id: string }
   | { type: "hydrate"; state: State }
   | { type: "reset" };

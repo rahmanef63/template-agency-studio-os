@@ -86,6 +86,7 @@ export const SEED_PROCESS_STEPS: ProcessStep[] = [
     blurb: "Stakeholder interviews, market scan, dan workshop positioning. Kami pulang dengan satu kalimat positioning yang tim sales bisa pakai besok.",
     duration: "1–2 minggu",
     deliverables: ["Stakeholder map", "Competitor audit", "Positioning canvas", "Audience hypothesis"],
+    order: 10,
   },
   {
     id: "step-design",
@@ -94,6 +95,7 @@ export const SEED_PROCESS_STEPS: ProcessStep[] = [
     blurb: "Dua minggu intensif. Bukan 40 logo direction — tiga territory yang berbeda secara strategis, masing-masing teruji ke audience proxy.",
     duration: "2–3 minggu",
     deliverables: ["Brand territories", "Type + color tokens", "Motion principles", "Naming exploration"],
+    order: 20,
   },
   {
     id: "step-build",
@@ -102,6 +104,7 @@ export const SEED_PROCESS_STEPS: ProcessStep[] = [
     blurb: "Production-ready: tokens di Figma + Tailwind, komponen di Storybook, motion primitives di Framer. Engineering di-loop sejak hari satu.",
     duration: "5–10 minggu",
     deliverables: ["Token architecture", "Component library", "Storybook docs", "Adoption playbook"],
+    order: 30,
   },
   {
     id: "step-launch",
@@ -110,5 +113,6 @@ export const SEED_PROCESS_STEPS: ProcessStep[] = [
     blurb: "Soft launch internal dulu, kemudian eksternal. Kami kembali setelah 6 minggu untuk audit adopsi — gratis, bagian dari paket.",
     duration: "2 minggu + 6 minggu revisit",
     deliverables: ["Launch checklist", "Internal training session", "Adoption metrics dashboard", "Six-week revisit audit"],
+    order: 40,
   },
 ];

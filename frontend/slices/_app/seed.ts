@@ -1,5 +1,5 @@
 import { SEED_PAGES } from "./pages-seed";
-import { SEED_ARTICLES } from "./journal-seed";
+import { SEED_ARTICLES, SEED_PROCESS_STEPS } from "./journal-seed";
 import { SEED_COMMENTS } from "./comments-seed";
 import { SEED_LEADS } from "./leads-seed";
 import { SEED_LANDING_SECTIONS } from "./landing-seed";
@@ -162,6 +162,7 @@ export const SEED_STATE: State = {
   leads: SEED_LEADS,
   articles: ENRICHED_ARTICLES,
   team: SEED_TEAM,
+  processSteps: SEED_PROCESS_STEPS,
   comments: SEED_COMMENTS,
   subscribers: SEED_SUBSCRIBERS,
   newsletters: SEED_NEWSLETTERS,

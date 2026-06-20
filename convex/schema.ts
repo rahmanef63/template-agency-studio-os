@@ -56,6 +56,17 @@ export default defineSchema({
     featured: v.boolean(),
   }).index("by_slug", ["slug"]),
 
+  // Public /process stepper. `index` is the displayed phase number; `order`
+  // drives sort + admin reorder arrows (mirrors agencyTeam.by_order).
+  agencyProcessSteps: defineTable({
+    index: v.number(),
+    phase: v.string(),
+    blurb: v.string(),
+    duration: v.string(),
+    deliverables: v.array(v.string()),
+    order: v.number(),
+  }).index("by_order", ["order"]),
+
   agencyLeads: defineTable({
     name: v.string(),
     company: v.string(),

@@ -17,6 +17,7 @@ import {
   Users,
   UsersRound,
   Wand2,
+  Workflow,
 } from "lucide-react";
 import type { AdminNavGroup, AdminNavItem, FooterColumn, NavItem, User } from "@/features/_shared/types/common";
 import type { State } from "./types";
@@ -90,6 +91,7 @@ export function buildAdminPrimaryNav(state: State): AdminNavItem[] {
         { id: "pages-landing",  label: "Landing page", href: `${ADMIN_BASE}/landing`,  icon: LayoutTemplate, count: enabledLanding || null },
         { id: "pages-projects", label: "Work",         href: `${ADMIN_BASE}/projects`, icon: Briefcase,      count: activeProjects || null },
         { id: "pages-services", label: "Services",     href: `${ADMIN_BASE}/services`, icon: Sparkles,       count: state.services.length || null },
+        { id: "pages-process",  label: "Process",      href: `${ADMIN_BASE}/process`,  icon: Workflow,       count: state.processSteps.length || null },
         { id: "pages-journal",  label: "Journal",      href: `${ADMIN_BASE}/journal-editor`, icon: BookOpen, count: draftArticles || null },
         // BF-wave — dynamic custom pages (every admin-created page shows here).
         ...buildCustomPageNavItems(state.pages, `${ADMIN_BASE}/pages`),

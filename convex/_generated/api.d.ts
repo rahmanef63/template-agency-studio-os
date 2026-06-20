@@ -29,6 +29,7 @@ import type * as landing from "../landing.js";
 import type * as leads from "../leads.js";
 import type * as newsletters from "../newsletters.js";
 import type * as pages from "../pages.js";
+import type * as processSteps from "../processSteps.js";
 import type * as projects from "../projects.js";
 import type * as seed from "../seed.js";
 import type * as services from "../services.js";
@@ -67,6 +68,7 @@ declare const fullApi: ApiFromModules<{
   leads: typeof leads;
   newsletters: typeof newsletters;
   pages: typeof pages;
+  processSteps: typeof processSteps;
   projects: typeof projects;
   seed: typeof seed;
   services: typeof services;

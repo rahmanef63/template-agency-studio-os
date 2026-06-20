@@ -8,14 +8,21 @@ import { Button } from "@/components/ui/button";
 import { SectionHead } from "@/features/_shared/ui/section-head";
 import { Reveal } from "@/features/_shared/motion";
 import { SEED_PROCESS_STEPS } from "@/features/_app/journal-seed";
+import { useProcessSteps } from "@/features/_app/store";
 import { PUBLIC_BASE } from "@/features/_app/nav-config";
 
 /**
  * Process page — visual stepper showing the 4-phase studio engagement
  * (Discovery → Design Sprint → Build → Launch). Each step is a card with
  * phase, blurb, duration, and deliverable bullets.
+ *
+ * Reads admin-editable steps from the `agencyProcessSteps` Convex table; when
+ * the table is empty (fresh/unseeded showcase) it falls back to the canonical
+ * SEED_PROCESS_STEPS so the public page is never blank.
  */
 export function ProcessPage() {
+  const stored = useProcessSteps();
+  const steps = stored.length > 0 ? stored : SEED_PROCESS_STEPS;
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <SectionHead
@@ -26,9 +33,9 @@ export function ProcessPage() {
       />
 
       <ol className="mt-14 space-y-6">
-        {SEED_PROCESS_STEPS.map((step, i) => (
+        {steps.map((step, i) => (
           <li key={step.id} className="relative">
-            {i < SEED_PROCESS_STEPS.length - 1 && (
+            {i < steps.length - 1 && (
               <span
                 aria-hidden
                 className="absolute left-[27px] top-16 hidden h-[calc(100%+0px)] w-px bg-border md:block"

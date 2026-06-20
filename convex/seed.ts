@@ -45,6 +45,15 @@ const SERVICES = [
   { slug: "design-ops", name: "Design Ops Retainer", blurb: "Embedded design partnership — sprints, reviews, hiring help.", priceLabel: "Rp 35jt /bulan", duration: "rolling", bullets: ["Weekly sprints", "Design reviews", "Recruitment + interview help", "Tooling audits"], featured: false },
 ];
 
+// Public /process stepper. `order` drives sort + admin reorder; mirrors the
+// frontend SEED_PROCESS_STEPS array (journal-seed.ts) the page used to hardcode.
+const PROCESS_STEPS = [
+  { index: 1, phase: "Discovery", blurb: "Stakeholder interviews, market scan, dan workshop positioning. Kami pulang dengan satu kalimat positioning yang tim sales bisa pakai besok.", duration: "1–2 minggu", deliverables: ["Stakeholder map", "Competitor audit", "Positioning canvas", "Audience hypothesis"], order: 10 },
+  { index: 2, phase: "Design Sprint", blurb: "Dua minggu intensif. Bukan 40 logo direction — tiga territory yang berbeda secara strategis, masing-masing teruji ke audience proxy.", duration: "2–3 minggu", deliverables: ["Brand territories", "Type + color tokens", "Motion principles", "Naming exploration"], order: 20 },
+  { index: 3, phase: "Build", blurb: "Production-ready: tokens di Figma + Tailwind, komponen di Storybook, motion primitives di Framer. Engineering di-loop sejak hari satu.", duration: "5–10 minggu", deliverables: ["Token architecture", "Component library", "Storybook docs", "Adoption playbook"], order: 30 },
+  { index: 4, phase: "Launch & Revisit", blurb: "Soft launch internal dulu, kemudian eksternal. Kami kembali setelah 6 minggu untuk audit adopsi — gratis, bagian dari paket.", duration: "2 minggu + 6 minggu revisit", deliverables: ["Launch checklist", "Internal training session", "Adoption metrics dashboard", "Six-week revisit audit"], order: 40 },
+];
+
 // id retained as `_seedId` so comments can key the right article post-insert.
 const ARTICLES = [
   { _seedId: "art-1", slug: "northwind-rebrand-six-month-revisit", title: "Northwind: enam bulan setelah rebrand", excerpt: "Apa yang berubah setelah identitas baru diluncurkan ke 14 pasar — angka, friksi, dan satu surprise.", body: LONG_BODY, category: "case-study" as const, author: "Asti R.", readMinutes: 7, publishedAt: day(12), cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70", image: "https://picsum.photos/seed/agency-art-northwind/800/600", featured: true },
@@ -140,6 +149,7 @@ async function insertAll(ctx: any) {
   for (const p of PROJECTS) await ctx.db.insert("agencyProjects", p);
   for (const c of CLIENTS) await ctx.db.insert("agencyClients", c);
   for (const s of SERVICES) await ctx.db.insert("agencyServices", s);
+  for (const p of PROCESS_STEPS) await ctx.db.insert("agencyProcessSteps", p);
   for (const l of LEADS) await ctx.db.insert("agencyLeads", l);
 
   // Articles: remember the slug keyed by the seed id so comments link up to
@@ -187,6 +197,7 @@ async function insertAll(ctx: any) {
     projects: PROJECTS.length,
     clients: CLIENTS.length,
     services: SERVICES.length,
+    processSteps: PROCESS_STEPS.length,
     leads: LEADS.length,
     articles: ARTICLES.length,
     team: TEAM.length,
@@ -202,6 +213,7 @@ const CONTENT_TABLES = [
   "agencyProjects",
   "agencyClients",
   "agencyServices",
+  "agencyProcessSteps",
   "agencyLeads",
   "agencyArticles",
   "agencyTeam",

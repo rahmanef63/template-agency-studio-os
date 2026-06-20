@@ -1,36 +1,36 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { useStore } from "@/features/_app/store";
+import { CrudListView } from "@/features/_shared/crud/CrudListView";
+import type { ColumnDef, EntityMeta } from "@/features/_shared/crud/types";
+import { FIELDS, useServicesController } from "./ServicesEditorView";
+import { ADMIN_BASE, PUBLIC_BASE } from "@/features/_app/nav-config";
+import type { Service } from "@/features/_app/types";
+
+const META: EntityMeta = {
+  label: "Service",
+  labelPlural: "Services",
+  publicHref: () => `${PUBLIC_BASE}/services`,
+};
+
+const COLUMNS: ColumnDef<Service>[] = [
+  { key: "name", header: "Name", width: "w-[26%]" },
+  { key: "priceLabel", header: "Price", width: "w-[16%]" },
+  { key: "duration", header: "Duration", width: "w-[16%]", hideOnMobile: true },
+  { key: "blurb", header: "Blurb", width: "w-[30%]", hideOnMobile: true },
+  { key: "featured", header: "Featured", width: "w-[12%]", badge: "secondary" },
+];
 
 export function ServicesAdminView() {
-  const { state } = useStore();
+  const controller = useServicesController();
+  const featuredCount = controller.items.filter((s) => s.featured).length;
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Services</h1>
-        <p className="text-sm text-muted-foreground">Productized engagements shown on the public site.</p>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        {state.services.map((s) => (
-          <Card key={s.id} className="border-border/60">
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-medium">{s.name}</h3>
-                  <p className="mt-1 text-xs text-muted-foreground">{s.duration} · {s.priceLabel}</p>
-                </div>
-                {s.featured && <Badge variant="secondary">Featured</Badge>}
-              </div>
-              <p className="mt-3 text-sm text-muted-foreground">{s.blurb}</p>
-              <ul className="mt-3 space-y-1 text-xs text-muted-foreground">
-                {s.bullets.map((b) => <li key={b}>· {b}</li>)}
-              </ul>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
+    <CrudListView
+      meta={META}
+      controller={controller}
+      columns={COLUMNS}
+      fields={FIELDS}
+      editPath={(id) => `${ADMIN_BASE}/services/${id}`}
+      description={`${featuredCount} featured`}
+    />
   );
 }
