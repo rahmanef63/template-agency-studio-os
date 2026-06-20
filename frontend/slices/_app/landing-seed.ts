@@ -8,6 +8,7 @@ export const SEED_LANDING_SECTIONS: LandingSection[] = [
     kind: "hero",
     title: "Brand, design system, and product partner for ambitious teams.",
     subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.",
+    imageUrl: "/hero.webp",
     enabled: true,
   },
   {
