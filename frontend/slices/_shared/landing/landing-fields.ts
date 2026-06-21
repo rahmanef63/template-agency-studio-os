@@ -96,7 +96,6 @@ export const LANDING_FIELDS: FieldDef<LandingSection>[] = [
     placeholder: "https://… (subtle textures work best)",
     hint: "Full-bleed background behind the section. A soft gradient scrim keeps text readable.",
   },
-
   {
     kind: "custom",
     key: "layers",
