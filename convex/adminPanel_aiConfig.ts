@@ -66,6 +66,10 @@ const SEED_MODERATION: SeedRule[] = [
 export const get = query({
   args: {},
   handler: async (ctx) => {
+    // Admin-only read (dashboard is AdminGate-wrapped): exposes the persisted
+    // AI config + system prompts. Deny anonymous callers.
+    if (!(await getAuthUserId(ctx))) throw new ConvexError("Admin only.");
+
     const configRow = await ctx.db.query("adminAiConfig").first();
     const config = configRow
       ? {
