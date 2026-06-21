@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, internalMutation } from "./_generated/server";
 import { ConvexError } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requireUser } from "./_shared/auth";
@@ -122,7 +122,7 @@ const NEWSLETTERS = [
 // SEED_LANDING_SECTIONS. `syncLanding` below pushes additions/order to an
 // already-seeded deployment without touching admin-edited copy.
 const LANDING = [
-  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true },
+  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true, imageUrl: "/hero.webp" },
   { id: "ls-stats", order: 15, kind: "stats", title: "By the numbers", subtitle: "A few quick signals from recent quarters.", enabled: true },
   { id: "ls-features", order: 18, kind: "features", title: "Why teams pick us", subtitle: "The operating principles behind every engagement.", enabled: true },
   { id: "ls-portfolio", order: 20, kind: "portfolio", title: "Recent client engagements", subtitle: "A peek at what we've shipped lately.", enabled: true },
@@ -145,7 +145,7 @@ const PAGES = [
 ];
 
 // All demo content inserts (no wipe). Shared by `run` and `seedSample`.
-async function insertAll(ctx: any) {
+async function insertAll(ctx: any, opts: { landing?: boolean } = {}) {
   for (const p of PROJECTS) await ctx.db.insert("agencyProjects", p);
   for (const c of CLIENTS) await ctx.db.insert("agencyClients", c);
   for (const s of SERVICES) await ctx.db.insert("agencyServices", s);
@@ -190,7 +190,7 @@ async function insertAll(ctx: any) {
   for (const t of TEAM) await ctx.db.insert("agencyTeam", t);
   for (const s of SUBSCRIBERS) await ctx.db.insert("agencySubscribers", s);
   for (const n of NEWSLETTERS) await ctx.db.insert("agencyNewsletters", n);
-  for (const s of LANDING) await ctx.db.insert("landingSections", { sectionId: s.id, data: s });
+  if (opts.landing !== false) for (const s of LANDING) await ctx.db.insert("landingSections", { sectionId: s.id, data: s });
   for (const p of PAGES) await ctx.db.insert("pages", { entryId: p.id, slug: p.slug, data: p });
 
   return {
@@ -236,6 +236,37 @@ export const run = mutation({
       for (const row of await ctx.db.query(t).take(1000)) await ctx.db.delete(row._id);
     }
     return insertAll(ctx);
+  },
+});
+
+// Demo/CLI seed (NO auth, internal — run via `npx convex run seed:seedDemo`).
+// For SHOWCASE/demo deployments only. Refills the content tables for a full
+// demo and ensures the hero landing image, WITHOUT wiping admin-edited landing
+// copy. Idempotent.
+export const seedDemo = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    for (const t of CONTENT_TABLES) {
+      if (t === "landingSections") continue;
+      for (const row of await ctx.db.query(t).take(1000)) await ctx.db.delete(row._id);
+    }
+    const counts = await insertAll(ctx, { landing: false });
+    const hero = await ctx.db
+      .query("landingSections")
+      .withIndex("by_sectionId", (q) => q.eq("sectionId", "ls-hero"))
+      .unique();
+    let heroImage = false;
+    if (hero) {
+      const d = hero.data as Record<string, unknown>;
+      if (!d.imageUrl) {
+        await ctx.db.patch(hero._id, { data: { ...d, imageUrl: "/hero.webp" } });
+        heroImage = true;
+      }
+    } else {
+      for (const s of LANDING) await ctx.db.insert("landingSections", { sectionId: s.id, data: s });
+      heroImage = true;
+    }
+    return { ...counts, heroImage };
   },
 });
 

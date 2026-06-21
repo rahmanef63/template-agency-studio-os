@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
+import { IS_DEMO } from "@/lib/stage";
 
 function Spinner() {
   return (
@@ -25,6 +26,9 @@ function Spinner() {
 export function AdminGate({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
+  // Public demo: anon visitors see the dashboard; server requireUser still
+  // blocks every write (no demo-admin account → no leaked creds to abuse).
+  if (IS_DEMO) return <>{children}</>;
   if (!mounted) return <Spinner />;
   return <AdminGateInner>{children}</AdminGateInner>;
 }
