@@ -122,7 +122,7 @@ const NEWSLETTERS = [
 // SEED_LANDING_SECTIONS. `syncLanding` below pushes additions/order to an
 // already-seeded deployment without touching admin-edited copy.
 const LANDING = [
-  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true, imageUrl: "/hero.webp" },
+  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true },
   { id: "ls-stats", order: 15, kind: "stats", title: "By the numbers", subtitle: "A few quick signals from recent quarters.", enabled: true },
   { id: "ls-features", order: 18, kind: "features", title: "Why teams pick us", subtitle: "The operating principles behind every engagement.", enabled: true },
   { id: "ls-portfolio", order: 20, kind: "portfolio", title: "Recent client engagements", subtitle: "A peek at what we've shipped lately.", enabled: true },
@@ -241,8 +241,8 @@ export const run = mutation({
 
 // Demo/CLI seed (NO auth, internal — run via `npx convex run seed:seedDemo`).
 // For SHOWCASE/demo deployments only. Refills the content tables for a full
-// demo and ensures the hero landing image, WITHOUT wiping admin-edited landing
-// copy. Idempotent.
+// demo and seeds the landing lineup if empty, WITHOUT wiping admin-edited
+// landing copy. Idempotent.
 export const seedDemo = internalMutation({
   args: {},
   handler: async (ctx) => {
@@ -251,22 +251,12 @@ export const seedDemo = internalMutation({
       for (const row of await ctx.db.query(t).take(1000)) await ctx.db.delete(row._id);
     }
     const counts = await insertAll(ctx, { landing: false });
-    const hero = await ctx.db
-      .query("landingSections")
-      .withIndex("by_sectionId", (q) => q.eq("sectionId", "ls-hero"))
-      .unique();
-    let heroImage = false;
-    if (hero) {
-      const d = hero.data as Record<string, unknown>;
-      if (!d.imageUrl) {
-        await ctx.db.patch(hero._id, { data: { ...d, imageUrl: "/hero.webp" } });
-        heroImage = true;
-      }
-    } else {
+    // Seed landing only if the table is empty (preserve admin-edited copy).
+    const hasLanding = await ctx.db.query("landingSections").first();
+    if (!hasLanding) {
       for (const s of LANDING) await ctx.db.insert("landingSections", { sectionId: s.id, data: s });
-      heroImage = true;
     }
-    return { ...counts, heroImage };
+    return counts;
   },
 });
 

@@ -24,6 +24,7 @@ import {
   JournalTeaser,
   buildAgencyStats,
 } from "./LandingExtras";
+import { HERO_IMG } from "./home-data";
 
 interface Deps {
   featured: Project[];
@@ -51,8 +52,8 @@ export function renderLanding(section: LandingSection, deps: Deps) {
             subtitle={section.subtitle ?? DEFAULT_SITE_CONFIG.description}
             primaryCta={{ label: "Start a project", href: `${PUBLIC_BASE}/contact` }}
             secondaryCta={{ label: "See work", href: `${PUBLIC_BASE}/portfolio` }}
-            sidekick={section.imageUrl ? undefined : <HeroMetrics />}
-            image={section.imageUrl ? { url: section.imageUrl, ratio: section.imageRatio } : undefined}
+            sidekick={<HeroMetrics />}
+            bgImage={HERO_IMG}
           />
         </LandingSectionShell>
       );

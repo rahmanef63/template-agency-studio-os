@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +38,7 @@ export function HeroBlock({
   variant = "centered",
   sidekick,
   image,
+  bgImage,
   glow = false,
   className,
 }: {
@@ -51,6 +53,9 @@ export function HeroBlock({
   /** Foreground illustration. Auto-promotes variant to "split" when set
    *  and no sidekick is provided. */
   image?: { url: string; ratio?: AspectRatio; alt?: string };
+  /** Full-bleed ambient background image rendered behind the content
+   *  (not a foreground card). Sits at -z-10 with a fade overlay. */
+  bgImage?: string;
   glow?: boolean;
   className?: string;
 }) {
@@ -70,6 +75,12 @@ export function HeroBlock({
         className,
       )}
     >
+      {bgImage && (
+        <div className="absolute inset-0 -z-20 pointer-events-none">
+          <Image src={bgImage} alt="" fill priority sizes="100vw" className="object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/85 to-background" />
+        </div>
+      )}
       {glow && (
         <div className="absolute inset-0 -z-10 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
