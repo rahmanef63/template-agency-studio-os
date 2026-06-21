@@ -46,7 +46,11 @@ export const remove = mutation({
 // Reuses the existing agencySubscribers table + by_email index.
 export const subscribe = mutation({
   args: { email: v.string(), source: v.string() },
-  handler: async (ctx, { email, source }) => {
+  handler: async (ctx, { email: rawEmail, source: rawSource }) => {
+    // Public anonymous-callable: clamp + validate user-supplied strings.
+    const email = rawEmail.slice(0, 320);
+    const source = rawSource.slice(0, 500);
+    if (!email.includes("@")) throw new Error("Email tidak valid");
     const existing = await ctx.db
       .query("agencySubscribers")
       .withIndex("by_email", (q) => q.eq("email", email))

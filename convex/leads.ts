@@ -36,8 +36,24 @@ export const create = mutation({
     status: v.optional(STATUS),
     ts: v.optional(v.number()),
   },
-  handler: async (ctx, { status, ts, ...data }) =>
-    ctx.db.insert("agencyLeads", { ...data, status: status ?? "new", ts: ts ?? Date.now() }),
+  handler: async (ctx, { status, ts, ...data }) => {
+    // Public anonymous-callable: clamp user-supplied strings before insert.
+    const clean = {
+      name: data.name.slice(0, 200),
+      company: data.company.slice(0, 200),
+      email: data.email.slice(0, 320),
+      phone: data.phone?.slice(0, 500),
+      topic: data.topic.slice(0, 5000),
+      source: data.source.slice(0, 500),
+      budget: data.budget?.slice(0, 500),
+    };
+    if (!clean.email.includes("@")) throw new Error("Email tidak valid");
+    return ctx.db.insert("agencyLeads", {
+      ...clean,
+      status: status ?? "new",
+      ts: ts ?? Date.now(),
+    });
+  },
 });
 
 export const update = mutation({
