@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,9 @@ import { useInView } from "../motion/use-in-view";
 import {
   ASPECT_RATIO_CLASS,
   type AspectRatio,
+  type HeroLayer,
 } from "../landing/types";
+import { HeroLayers } from "../landing/HeroLayers";
 import type { Cta } from "../types/common";
 
 /** Inline stagger helper — hero children reveal with incremental delays
@@ -39,6 +40,8 @@ export function HeroBlock({
   sidekick,
   image,
   bgImage,
+  layers,
+  shade = false,
   glow = false,
   className,
 }: {
@@ -53,9 +56,16 @@ export function HeroBlock({
   /** Foreground illustration. Auto-promotes variant to "split" when set
    *  and no sidekick is provided. */
   image?: { url: string; ratio?: AspectRatio; alt?: string };
-  /** Full-bleed ambient background image rendered behind the content
-   *  (not a foreground card). Sits at -z-10 with a fade overlay. */
+  /** Full-bleed ambient background image. Used as the fallback for the
+   *  background HeroLayers band when no admin layers are configured. */
   bgImage?: string;
+  /** Admin-composed background / foreground layers. A background layer
+   *  replaces `bgImage`; otherwise `bgImage` is the fallback. */
+  layers?: HeroLayer[];
+  /** Readability scrim + brand glow over the background image. OFF by
+   *  default → image shows in full real color; ON → gradient + glow for
+   *  legibility over busy images. */
+  shade?: boolean;
   glow?: boolean;
   className?: string;
 }) {
@@ -75,9 +85,13 @@ export function HeroBlock({
         className,
       )}
     >
-      {bgImage && (
-        <div className="absolute inset-0 -z-20 pointer-events-none">
-          <Image src={bgImage} alt="" fill priority sizes="100vw" className="object-cover opacity-20" />
+      {/* Background image band — admin layers, or `bgImage` fallback (full
+          opacity = real colors). */}
+      <HeroLayers placement="background" layers={layers} fallbackImg={bgImage} />
+      {/* Readability scrim — opt-in via `shade` so the image can show in full
+          real color by default. */}
+      {shade && (
+        <div className="absolute inset-0 -z-10 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/85 to-background" />
         </div>
       )}
@@ -156,6 +170,8 @@ export function HeroBlock({
           </div>
         )}
       </div>
+      {/* Foreground layers — above the content, click-through. */}
+      <HeroLayers placement="foreground" layers={layers} />
     </section>
   );
 }

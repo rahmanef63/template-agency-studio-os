@@ -54,6 +54,8 @@ export function renderLanding(section: LandingSection, deps: Deps) {
             secondaryCta={{ label: "See work", href: `${PUBLIC_BASE}/portfolio` }}
             sidekick={<HeroMetrics />}
             bgImage={HERO_IMG}
+            layers={section.layers}
+            shade={section.shade}
           />
         </LandingSectionShell>
       );

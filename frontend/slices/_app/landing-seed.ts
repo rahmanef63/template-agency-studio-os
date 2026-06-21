@@ -9,6 +9,9 @@ export const SEED_LANDING_SECTIONS: LandingSection[] = [
     title: "Brand, design system, and product partner for ambitious teams.",
     subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.",
     enabled: true,
+    layers: [
+      { id: "hero-photo", type: "image", placement: "background", opacity: 100, enabled: true, url: "/hero.webp" },
+    ],
   },
   {
     id: "ls-stats",

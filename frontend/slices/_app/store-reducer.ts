@@ -80,6 +80,26 @@ export function reducer(state: State, action: Action): State {
     case "article.delete":
       return { ...state, articles: state.articles.filter((a) => a.id !== action.id) };
 
+    case "team.upsert": {
+      const idx = state.team.findIndex((t) => t.id === action.member.id);
+      const team = idx >= 0
+        ? state.team.map((t) => (t.id === action.member.id ? action.member : t))
+        : [...state.team, action.member];
+      return { ...state, team };
+    }
+    case "team.delete":
+      return { ...state, team: state.team.filter((t) => t.id !== action.id) };
+
+    case "process.upsert": {
+      const idx = state.processSteps.findIndex((p) => p.id === action.step.id);
+      const processSteps = idx >= 0
+        ? state.processSteps.map((p) => (p.id === action.step.id ? action.step : p))
+        : [...state.processSteps, action.step];
+      return { ...state, processSteps };
+    }
+    case "process.delete":
+      return { ...state, processSteps: state.processSteps.filter((p) => p.id !== action.id) };
+
     case "comment.upsert": {
       const idx = state.comments.findIndex((c) => c.id === action.comment.id);
       const comments = idx >= 0

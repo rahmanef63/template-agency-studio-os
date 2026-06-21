@@ -122,7 +122,7 @@ const NEWSLETTERS = [
 // SEED_LANDING_SECTIONS. `syncLanding` below pushes additions/order to an
 // already-seeded deployment without touching admin-edited copy.
 const LANDING = [
-  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true },
+  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true, layers: [{ id: "hero-photo", type: "image", placement: "background", opacity: 100, enabled: true, url: "/hero.webp" }] },
   { id: "ls-stats", order: 15, kind: "stats", title: "By the numbers", subtitle: "A few quick signals from recent quarters.", enabled: true },
   { id: "ls-features", order: 18, kind: "features", title: "Why teams pick us", subtitle: "The operating principles behind every engagement.", enabled: true },
   { id: "ls-portfolio", order: 20, kind: "portfolio", title: "Recent client engagements", subtitle: "A peek at what we've shipped lately.", enabled: true },
