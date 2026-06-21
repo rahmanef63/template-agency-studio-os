@@ -6,6 +6,8 @@ import { api } from "@/convex/_generated/api";
 import { ConvexClientProvider } from "@/components/convex-provider";
 import { ThemeProviders } from "@/components/theme-providers";
 import { Toaster } from "sonner";
+import { IS_DEMO } from "@/lib/stage";
+import { DemoShell } from "@/features/_shared/demo-shell";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -52,6 +54,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense fallback={null}>
             <ConvexClientProvider>{children}</ConvexClientProvider>
           </Suspense>
+          {/* DEMO-only interactive shell (Public/Admin/Split). Gated here so
+              real clones never even mount the client component. */}
+          {IS_DEMO && <DemoShell />}
         </ThemeProviders>
         <Toaster position="bottom-right" />
       </body>

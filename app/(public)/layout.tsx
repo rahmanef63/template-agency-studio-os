@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { DemoRibbon } from "@/components/demo-ribbon";
 import { AiChatFab } from "@/components/ai-chat-fab";
 import { Suspense, type ReactNode } from "react";
 import { SiteShell } from "@/features/_shared/ui/site-shell";
@@ -49,7 +48,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       <StoreProvider>
       <SiteLoader brandLetter={DEFAULT_SITE_CONFIG.brandLetter} />
         <PublicChrome>{children}</PublicChrome>
-      <DemoRibbon />
         <AiChatFab brand={DEFAULT_SITE_CONFIG.brandName} />
         </StoreProvider>
     </Suspense>

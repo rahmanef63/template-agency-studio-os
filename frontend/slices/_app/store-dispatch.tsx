@@ -6,8 +6,38 @@ import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { IS_DEMO } from "@/lib/stage";
+import { reducer } from "./store-reducer";
+import { saveDemoState, broadcastAction, openDemoChannel } from "@/lib/demo-store";
 import type { Action, State } from "./types";
 import { dispatchContentCases } from "./store-dispatch-cases";
+
+// DEMO dispatch: every action runs through the same pure `reducer`, the next
+// State is persisted to localStorage, and the action is broadcast so the
+// sibling iframe (public<->admin) re-renders live. Mounted only when
+// NEXT_PUBLIC_DEMO=1 (see store.tsx DemoProvider); replaces the Convex mutation
+// path for the demo. Real clones never call this — they use useConvexDispatch.
+export function useDemoDispatch(
+  setState: React.Dispatch<React.SetStateAction<State>>,
+): (a: Action) => void {
+  // One channel per provider instance; closed on unmount.
+  const channelRef = React.useRef<BroadcastChannel | null>(null);
+  React.useEffect(() => {
+    channelRef.current = openDemoChannel();
+    return () => channelRef.current?.close();
+  }, []);
+
+  return React.useCallback(
+    (action: Action) => {
+      setState((s) => {
+        const next = reducer(s, action);
+        saveDemoState(next);
+        return next;
+      });
+      broadcastAction(channelRef.current, action);
+    },
+    [setState],
+  );
+}
 
 // Dispatch wiring, split out of store.tsx (move-only): routes each store
 // action to the matching Convex mutation. `id` is passed to upsert only when
