@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { optionalUser, requireUser } from "./_shared/auth";
+import { limitPublicWrite } from "./_shared/rateLimit";
 
 const STATUS = v.union(
   v.literal("new"),
@@ -48,6 +49,7 @@ export const create = mutation({
       budget: data.budget?.slice(0, 500),
     };
     if (!clean.email.includes("@")) throw new Error("Email tidak valid");
+    await limitPublicWrite(ctx, "lead", clean.email);
     return ctx.db.insert("agencyLeads", {
       ...clean,
       status: status ?? "new",
