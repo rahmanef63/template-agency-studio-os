@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, Compass, Globe, Layers, UserCheck } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MetricRow, type FeatureItem } from "@/features/_shared";
+import { MetricRow } from "@/features/_shared";
 import { SectionHead } from "@/features/_shared/ui/section-head";
 import { CountUp, Stagger } from "@/features/_shared/motion";
 import {
@@ -22,17 +22,21 @@ import { fmtDate } from "@/features/_app/store";
 import { PUBLIC_BASE } from "@/features/_app/nav-config";
 import { DEFAULT_SITE_CONFIG } from "@/features/_app/site-config";
 import type { Article, Client, Project, Service } from "@/features/_app/types";
+import {
+  FAQS,
+  PRICING,
+  PROCESS_BODY,
+  TESTIMONIALS,
+} from "@/convex/landingContent";
+import { FEATURE_ITEMS } from "./feature-config";
 
-/** Agency-studio default content for the shared landing sections — every
- *  value overridable per-section via the admin landing editor's config
- *  JSON (see _shared/landing/sections/config.ts for keys). */
+/** Agency-studio default landing content lives in convex/landingContent.ts —
+ *  the SINGLE source the seed also reads (it writes the same content into
+ *  Convex config). These re-exports are the render fallback before the seed
+ *  runs; edit the content in that module, not here. Every value is also
+ *  overridable per-section via the admin landing editor's config JSON. */
 
-export const AGENCY_FEATURES: FeatureItem[] = [
-  { icon: Compass, title: "Strategy first", blurb: "Positioning before pixels — every engagement starts with the why." },
-  { icon: Layers, title: "Systems, not assets", blurb: "Tokens, components, and guidelines your team actually adopts." },
-  { icon: UserCheck, title: "Principal-led", blurb: "A principal runs every project end-to-end. No handoff to juniors." },
-  { icon: Globe, title: "Async-first", blurb: "Two fixed syncs a week, any timezone — progress you can read." },
-];
+export const AGENCY_FEATURES = FEATURE_ITEMS;
 
 /** Live stats — counted from store data so the band stays seed-coherent
  *  (and updates when admin CRUDs projects/clients/services). */
@@ -50,55 +54,15 @@ export function buildAgencyStats(deps: {
   ];
 }
 
-export const AGENCY_TESTIMONIALS: TestimonialItem[] = [
-  { quote: "They shipped a brand system our own team actually uses — components, tokens, and the why behind every call.", author: "Hana Wibowo", role: "VP Marketing — Northwind Logistics" },
-  { quote: "Two-week sprint, zero fluff. The positioning deck still runs our sales narrative a year later.", author: "Diego R.", role: "Head of Product — Cumulus SaaS" },
-  { quote: "Launch landed on time and the six-week revisit caught what we missed. Rare discipline.", author: "Maya P.", role: "CEO — Zenith Health" },
-  { quote: "Felt embedded, not outsourced. Our designers leveled up just by pairing with them.", author: "Pak Anto", role: "Brand Director — Atlas Group" },
-];
+export const AGENCY_TESTIMONIALS: TestimonialItem[] = TESTIMONIALS;
 
-export const AGENCY_FAQS: FaqItem[] = [
-  { q: "How fast can we start?", a: "Discovery slots open every 2–3 weeks. Send a brief and we respond within 24h with a scope and a start date." },
-  { q: "What does an engagement cost?", a: "Productized sprints are fixed-price — see Services. Retainers and multi-month builds are scoped after discovery." },
-  { q: "Who actually does the work?", a: "A principal leads every project end-to-end. No handoff to juniors or account managers." },
-  { q: "Do you work with remote teams?", a: "Yes — most engagements run async-first with two fixed syncs per week, any timezone." },
-];
+export const AGENCY_FAQS: FaqItem[] = FAQS;
 
-export const AGENCY_TIERS: PricingTier[] = [
-  {
-    name: "Project",
-    price: "From Rp 65jt",
-    blurb: "Fixed-scope sprint — strategy, identity, or a launch site.",
-    features: ["Scoped brief + fixed timeline", "Principal-led, no handoffs", "Two structured revision rounds", "Six-week post-launch revisit"],
-    ctaLabel: "Send the brief",
-    ctaHref: `${PUBLIC_BASE}/contact`,
-  },
-  {
-    name: "Retainer",
-    price: "Rp 35jt",
-    period: "/month",
-    blurb: "Design ops partnership on a rolling monthly cadence.",
-    features: ["Weekly design sprints", "Design + brand reviews", "Priority booking for new scopes", "Pause or scale any month"],
-    featured: true,
-    ctaLabel: "Book a call",
-    ctaHref: `${PUBLIC_BASE}/contact`,
-  },
-  {
-    name: "Embedded team",
-    price: "Custom",
-    blurb: "A 2–3 person pod inside your product org for multi-month builds.",
-    features: ["Design system + product design", "Async-first, in your tools", "Hiring + interview support", "Quarterly roadmap input"],
-    ctaLabel: "Talk to us",
-    ctaHref: `${PUBLIC_BASE}/contact`,
-  },
-];
+export const AGENCY_TIERS: PricingTier[] = PRICING;
 
 /** Default paragraphs for the process-tease `custom` section (CTA comes
- *  from the section's config JSON — see landing-seed). */
-export const AGENCY_PROCESS_BODY: string[] = [
-  "Empat fase, satu sistem: discovery, design, build, dan six-week revisit. Setiap fase punya scope yang jelas, deliverable yang spesifik, dan tim klien yang terlibat sejak hari satu.",
-  "Bukan handoff, tapi adopsi — klien yang dilibatkan sejak awal mengadopsi sistem 3× lebih cepat.",
-];
+ *  from the section's config JSON — see landingContent.PROCESS_CTA / the seed). */
+export const AGENCY_PROCESS_BODY: string[] = PROCESS_BODY;
 
 /** Hero sidekick card — selected studio metrics next to the headline. */
 export function HeroMetrics() {

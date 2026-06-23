@@ -17,7 +17,6 @@ import { DEFAULT_SITE_CONFIG } from "@/features/_app/site-config";
 import type { Article, Client, Project, Service } from "@/features/_app/types";
 import {
   AGENCY_FAQS,
-  AGENCY_FEATURES,
   AGENCY_PROCESS_BODY,
   AGENCY_TESTIMONIALS,
   AGENCY_TIERS,
@@ -25,6 +24,7 @@ import {
   JournalTeaser,
   buildAgencyStats,
 } from "./LandingExtras";
+import { resolveFeatureItems } from "./feature-config";
 
 interface Deps {
   featured: Project[];
@@ -73,7 +73,7 @@ export function renderLanding(section: LandingSection, deps: Deps) {
         <LandingSectionShell section={section} defaultClassName="border-b border-border/60">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
             <SectionHead eyebrow="Why teams pick us" title={section.title} subtitle={section.subtitle} />
-            <FeatureGrid items={AGENCY_FEATURES} columns={4} className="mt-10" />
+            <FeatureGrid items={resolveFeatureItems(section.config)} columns={4} className="mt-10" />
           </div>
         </LandingSectionShell>
       );

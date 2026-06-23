@@ -15,8 +15,18 @@ export { SEED_LANDING_SECTIONS };
 const now = Date.now();
 const day = (n: number) => now - n * 24 * 60 * 60 * 1000;
 
-const LOREM =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.";
+// Per-project case-study briefs — render LIVE on the portfolio detail page, so
+// each is real on-brand copy (never lorem). Keep in sync with convex/seed.ts.
+const BRIEF_NORTHWIND =
+  "Northwind had grown into 14 markets on a logo that still read like a 1990s freight broker. The brief: reposition a 30-year logistics firm for digital-native shippers without alienating the enterprise accounts that pay the bills. We ran eight stakeholder interviews, a three-competitor audit, and a two-day naming sprint before a single pixel moved.";
+const BRIEF_CUMULUS =
+  "Cumulus shipped on three platforms with three diverging design languages and a Figma library nobody trusted. The brief: one token architecture and a component set engineering would actually adopt — not a style guide that rots in a wiki. We co-built it inside their stack, paired with their staff engineers, and shipped an adoption playbook alongside the system.";
+const BRIEF_ZENITH =
+  "Zenith was launching a connected-device health product with a hard pre-order date and no marketing site. The brief: a ruthlessly focused launch site — three pages, one form, zero distraction — that converts cold traffic into pre-orders. We owned positioning, copy, design, and build, and instrumented every step of the funnel before launch day.";
+const BRIEF_ATLAS =
+  "Atlas's frontline workforce was running shift swaps, payroll, and training through three disconnected portals and a lot of WhatsApp. The brief: redesign the internal portal into one product their staff would open daily, on phones, on shaky warehouse Wi-Fi. We embedded with their product team for a six-sprint build.";
+const BRIEF_KIRA =
+  "Kira raised a Series A on a demo and a deck but couldn't say in one sentence what category they own. The brief: a positioning sprint and market study to give the founding team a narrative sales and investors repeat back. Kickoff is complete; market interviews are underway as we synthesize the territory map.";
 
 export const SEED_PROJECTS: Project[] = [
   {
@@ -27,7 +37,7 @@ export const SEED_PROJECTS: Project[] = [
     category: "Brand Identity",
     cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70",
     blurb: "Repositioning a 30-year logistics firm for the modern shipper.",
-    brief: LOREM,
+    brief: BRIEF_NORTHWIND,
     outcome: "Visual system rolled out across 14 markets, +28% inbound demo requests Q1 post-launch.",
     status: "delivered",
     publishedAt: day(40),
@@ -41,7 +51,7 @@ export const SEED_PROJECTS: Project[] = [
     category: "Design System",
     cover: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1400&q=70",
     blurb: "Tokens, components, and motion primitives for a cross-platform SaaS.",
-    brief: LOREM,
+    brief: BRIEF_CUMULUS,
     outcome: "Time-to-prototype reduced 40%; designer-engineer handoff issues down 60%.",
     status: "delivered",
     publishedAt: day(70),
@@ -55,7 +65,7 @@ export const SEED_PROJECTS: Project[] = [
     category: "Web Launch",
     cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70",
     blurb: "Pre-order launch site for a connected-device health startup.",
-    brief: LOREM,
+    brief: BRIEF_ZENITH,
     outcome: "1.2k pre-orders in 14 days, $480k pre-launch revenue.",
     status: "delivered",
     publishedAt: day(90),
@@ -69,7 +79,7 @@ export const SEED_PROJECTS: Project[] = [
     category: "Product Design",
     cover: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70",
     blurb: "Frontline workforce portal — shift swaps, payroll, training.",
-    brief: LOREM,
+    brief: BRIEF_ATLAS,
     outcome: "Active users 2.4× over 60 days; support tickets cut by 35%.",
     status: "build",
     publishedAt: day(15),
@@ -83,7 +93,7 @@ export const SEED_PROJECTS: Project[] = [
     category: "Strategy",
     cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70",
     blurb: "Positioning workshop + market study for a Series A AI startup.",
-    brief: LOREM,
+    brief: BRIEF_KIRA,
     outcome: "In progress — kickoff complete, market interviews underway.",
     status: "discovery",
     publishedAt: day(5),

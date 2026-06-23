@@ -2,6 +2,7 @@ import { mutation, internalMutation } from "./_generated/server";
 import { ConvexError } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requireUser } from "./_shared/auth";
+import { HERO, FEATURES, TESTIMONIALS, FAQS, PRICING, PROCESS_BODY, PROCESS_CTA } from "./landingContent";
 
 // Demo seed for Agency Studio OS.
 // - `seed:run`        — CLI/power use: wipes content then inserts (npx convex run seed:run).
@@ -10,24 +11,40 @@ import { requireUser } from "./_shared/auth";
 //
 // Data mirrors components/templates/agency-studio/shared/*-seed.ts (the former
 // localStorage SEED_STATE), converted to Convex inserts.
+//
+// Item-bearing landing sections (features/custom/testimonials/pricing/faq) seed
+// their example content into `config` from convex/landingContent.ts — the SAME
+// module the frontend render falls back to — so a fresh clone gets editable
+// example data and there is no convex<->render drift. Table-backed kinds
+// (portfolio/services/stats/blog) render from their own data and carry no config.
 const now = 1_780_000_000_000;
 const day = (n: number) => now - n * 24 * 60 * 60 * 1000;
 const hr = (n: number) => now - n * 60 * 60 * 1000;
 const min = (n: number) => now - n * 60 * 1000;
 
-const LOREM =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.";
+// Per-project case-study briefs. Render LIVE on the portfolio detail page, so
+// each is real on-brand copy (never lorem).
+const BRIEF_NORTHWIND =
+  "Northwind had grown into 14 markets on a logo that still read like a 1990s freight broker. The brief: reposition a 30-year logistics firm for digital-native shippers without alienating the enterprise accounts that pay the bills. We ran eight stakeholder interviews, a three-competitor audit, and a two-day naming sprint before a single pixel moved.";
+const BRIEF_CUMULUS =
+  "Cumulus shipped on three platforms with three diverging design languages and a Figma library nobody trusted. The brief: one token architecture and a component set engineering would actually adopt — not a style guide that rots in a wiki. We co-built it inside their stack, paired with their staff engineers, and shipped an adoption playbook alongside the system.";
+const BRIEF_ZENITH =
+  "Zenith was launching a connected-device health product with a hard pre-order date and no marketing site. The brief: a ruthlessly focused launch site — three pages, one form, zero distraction — that converts cold traffic into pre-orders. We owned positioning, copy, design, and build, and instrumented every step of the funnel before launch day.";
+const BRIEF_ATLAS =
+  "Atlas's frontline workforce was running shift swaps, payroll, and training through three disconnected portals and a lot of WhatsApp. The brief: redesign the internal portal into one product their staff would open daily, on phones, on shaky warehouse Wi-Fi. We embedded with their product team for a six-sprint build.";
+const BRIEF_KIRA =
+  "Kira raised a Series A on a demo and a deck but couldn't say in one sentence what category they own. The brief: a positioning sprint and market study to give the founding team a narrative sales and investors repeat back. Kickoff is complete; market interviews are underway as we synthesize the territory map.";
 
 const LONG_BODY = `Setiap brand system yang kami kerjakan dimulai dari satu pertanyaan: apa yang akan diukur tim ini enam bulan setelah peluncuran? Kalau jawabannya kabur, identitas visual tidak akan menyelamatkan. Strategi dulu, baru bentuk.
 
 Dalam project ini kami menjalankan delapan stakeholder interview, tiga competitor audit, dan satu sprint naming dua hari. Hasilnya bukan deck cantik — tapi satu kalimat positioning yang dipakai sales, satu set token warna yang dipakai engineering, dan satu motion principle yang dipakai marketing.`;
 
 const PROJECTS = [
-  { slug: "northwind-rebrand", title: "Northwind — full identity rebrand", client: "Northwind Logistics", category: "Brand Identity", cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70", blurb: "Repositioning a 30-year logistics firm for the modern shipper.", brief: LOREM, outcome: "Visual system rolled out across 14 markets, +28% inbound demo requests Q1 post-launch.", status: "delivered" as const, publishedAt: day(40), featured: true },
-  { slug: "cumulus-design-system", title: "Cumulus — design system v2", client: "Cumulus SaaS", category: "Design System", cover: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1400&q=70", blurb: "Tokens, components, and motion primitives for a cross-platform SaaS.", brief: LOREM, outcome: "Time-to-prototype reduced 40%; designer-engineer handoff issues down 60%.", status: "delivered" as const, publishedAt: day(70), featured: true },
-  { slug: "zenith-launch", title: "Zenith — product launch site", client: "Zenith Health", category: "Web Launch", cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70", blurb: "Pre-order launch site for a connected-device health startup.", brief: LOREM, outcome: "1.2k pre-orders in 14 days, $480k pre-launch revenue.", status: "delivered" as const, publishedAt: day(90), featured: false },
-  { slug: "atlas-internal", title: "Atlas — internal portal redesign", client: "Atlas Group", category: "Product Design", cover: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70", blurb: "Frontline workforce portal — shift swaps, payroll, training.", brief: LOREM, outcome: "Active users 2.4× over 60 days; support tickets cut by 35%.", status: "build" as const, publishedAt: day(15), featured: false },
-  { slug: "kira-discovery", title: "Kira — strategy discovery", client: "Kira AI", category: "Strategy", cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70", blurb: "Positioning workshop + market study for a Series A AI startup.", brief: LOREM, outcome: "In progress — kickoff complete, market interviews underway.", status: "discovery" as const, publishedAt: day(5), featured: false },
+  { slug: "northwind-rebrand", title: "Northwind — full identity rebrand", client: "Northwind Logistics", category: "Brand Identity", cover: "https://images.unsplash.com/photo-1542744095-291d1f67b221?auto=format&fit=crop&w=1400&q=70", blurb: "Repositioning a 30-year logistics firm for the modern shipper.", brief: BRIEF_NORTHWIND, outcome: "Visual system rolled out across 14 markets, +28% inbound demo requests Q1 post-launch.", status: "delivered" as const, publishedAt: day(40), featured: true },
+  { slug: "cumulus-design-system", title: "Cumulus — design system v2", client: "Cumulus SaaS", category: "Design System", cover: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1400&q=70", blurb: "Tokens, components, and motion primitives for a cross-platform SaaS.", brief: BRIEF_CUMULUS, outcome: "Time-to-prototype reduced 40%; designer-engineer handoff issues down 60%.", status: "delivered" as const, publishedAt: day(70), featured: true },
+  { slug: "zenith-launch", title: "Zenith — product launch site", client: "Zenith Health", category: "Web Launch", cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70", blurb: "Pre-order launch site for a connected-device health startup.", brief: BRIEF_ZENITH, outcome: "1.2k pre-orders in 14 days, $480k pre-launch revenue.", status: "delivered" as const, publishedAt: day(90), featured: false },
+  { slug: "atlas-internal", title: "Atlas — internal portal redesign", client: "Atlas Group", category: "Product Design", cover: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70", blurb: "Frontline workforce portal — shift swaps, payroll, training.", brief: BRIEF_ATLAS, outcome: "Active users 2.4× over 60 days; support tickets cut by 35%.", status: "build" as const, publishedAt: day(15), featured: false },
+  { slug: "kira-discovery", title: "Kira — strategy discovery", client: "Kira AI", category: "Strategy", cover: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=70", blurb: "Positioning workshop + market study for a Series A AI startup.", brief: BRIEF_KIRA, outcome: "In progress — kickoff complete, market interviews underway.", status: "discovery" as const, publishedAt: day(5), featured: false },
 ];
 
 const CLIENTS = [
@@ -122,15 +139,15 @@ const NEWSLETTERS = [
 // SEED_LANDING_SECTIONS. `syncLanding` below pushes additions/order to an
 // already-seeded deployment without touching admin-edited copy.
 const LANDING = [
-  { id: "ls-hero", order: 10, kind: "hero", title: "Brand, design system, and product partner for ambitious teams.", subtitle: "Two-week sprints, multi-month builds, and embedded retainers — pick what fits.", enabled: true, layers: [{ id: "hero-photo", type: "image", placement: "background", opacity: 100, enabled: true, url: "/hero.webp" }] },
+  { id: "ls-hero", order: 10, kind: "hero", title: HERO.title, subtitle: HERO.subtitle, enabled: true, layers: [{ id: "hero-photo", type: "image", placement: "background", opacity: 100, enabled: true, url: "/hero.webp" }] },
   { id: "ls-stats", order: 15, kind: "stats", title: "By the numbers", subtitle: "A few quick signals from recent quarters.", enabled: true },
-  { id: "ls-features", order: 18, kind: "features", title: "Why teams pick us", subtitle: "The operating principles behind every engagement.", enabled: true },
+  { id: "ls-features", order: 18, kind: "features", title: "Why teams pick us", subtitle: "The operating principles behind every engagement.", enabled: true, config: JSON.stringify({ items: FEATURES }) },
   { id: "ls-portfolio", order: 20, kind: "portfolio", title: "Recent client engagements", subtitle: "A peek at what we've shipped lately.", enabled: true },
   { id: "ls-services", order: 30, kind: "services", title: "Productized + retainer engagements", subtitle: "Pick a sprint, a system build, or an embedded retainer.", enabled: true },
-  { id: "ls-process", order: 35, kind: "custom", title: "How we work", subtitle: "Empat fase, satu sistem — dari discovery hingga six-week revisit.", enabled: true, config: '{"ctaLabel":"See the process","ctaHref":"/process"}' },
-  { id: "ls-testimonials", order: 38, kind: "testimonials", title: "Teams we've shipped with", subtitle: "Real words from product, marketing, and founding teams.", enabled: true },
-  { id: "ls-pricing", order: 42, kind: "pricing", title: "Engagement models", subtitle: "Project, retainer, or embedded — pick the shape that fits.", enabled: true },
-  { id: "ls-faq", order: 46, kind: "faq", title: "Frequently asked", subtitle: "Start dates, pricing, and how the work actually runs.", enabled: true },
+  { id: "ls-process", order: 35, kind: "custom", title: "How we work", subtitle: "Empat fase, satu sistem — dari discovery hingga six-week revisit.", enabled: true, config: JSON.stringify({ body: PROCESS_BODY, ...PROCESS_CTA }) },
+  { id: "ls-testimonials", order: 38, kind: "testimonials", title: "Teams we've shipped with", subtitle: "Real words from product, marketing, and founding teams.", enabled: true, config: JSON.stringify({ items: TESTIMONIALS }) },
+  { id: "ls-pricing", order: 42, kind: "pricing", title: "Engagement models", subtitle: "Project, retainer, or embedded — pick the shape that fits.", enabled: true, config: JSON.stringify({ tiers: PRICING }) },
+  { id: "ls-faq", order: 46, kind: "faq", title: "Frequently asked", subtitle: "Start dates, pricing, and how the work actually runs.", enabled: true, config: JSON.stringify({ items: FAQS }) },
   { id: "ls-blog", order: 48, kind: "blog", title: "From the journal", subtitle: "Case-study revisits, playbooks, and field notes from the studio.", enabled: true },
   { id: "ls-cta", order: 50, kind: "cta", title: "Brief us — get a proposal in 5 days.", subtitle: "No commitment. We respond within 24h.", enabled: true },
   { id: "ls-newsletter", order: 55, kind: "newsletter", title: "Studio notes, monthly", subtitle: "One email a month — what we shipped, what we learned. No spam.", enabled: true },
