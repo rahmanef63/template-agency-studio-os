@@ -8,6 +8,7 @@ import { LandingSectionShell } from "@/features/_shared/landing/LandingSectionSh
 import {
   CustomSection, FaqSection, NewsletterSection,
   PricingSection, StatsSection, TestimonialsSection,
+  parseConfigObject, cfgString,
 } from "@/features/_shared/landing/sections";
 import type { LandingSection } from "@/features/_shared/landing/types";
 import { Stagger } from "@/features/_shared/motion";
@@ -41,7 +42,8 @@ interface Deps {
  */
 export function renderLanding(section: LandingSection, deps: Deps) {
   switch (section.kind) {
-    case "hero":
+    case "hero": {
+      const cfg = parseConfigObject(section.config);
       return (
         <LandingSectionShell section={section}>
           <HeroBlock
@@ -49,14 +51,15 @@ export function renderLanding(section: LandingSection, deps: Deps) {
             eyebrow={DEFAULT_SITE_CONFIG.studioName}
             title={section.title}
             subtitle={section.subtitle ?? DEFAULT_SITE_CONFIG.description}
-            primaryCta={{ label: "Start a project", href: `${PUBLIC_BASE}/contact` }}
-            secondaryCta={{ label: "See work", href: `${PUBLIC_BASE}/portfolio` }}
+            primaryCta={{ label: cfgString(cfg, "ctaPrimaryLabel") ?? "Start a project", href: cfgString(cfg, "ctaPrimaryHref") ?? `${PUBLIC_BASE}/contact` }}
+            secondaryCta={{ label: cfgString(cfg, "ctaSecondaryLabel") ?? "See work", href: cfgString(cfg, "ctaSecondaryHref") ?? `${PUBLIC_BASE}/portfolio` }}
             sidekick={<HeroMetrics />}
             layers={section.layers}
             shade={section.shade}
           />
         </LandingSectionShell>
       );
+    }
 
     case "stats":
       return (
