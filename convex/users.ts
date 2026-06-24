@@ -30,23 +30,3 @@ export const currentUser = query({
     };
   },
 });
-
-// All admins with their derived role. Admin-only (returns [] when signed out).
-export const listAdmins = query({
-  args: {},
-  handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
-    const users = await ctx.db.query("users").order("asc").collect();
-    return users.map((u, i) => {
-      const label = (u.name as string | undefined) || (u.email as string | undefined) || "Admin";
-      return {
-        _id: u._id,
-        name: (u.name as string | undefined) ?? null,
-        email: (u.email as string | undefined) ?? null,
-        role: i === 0 ? ("owner" as const) : ("editor" as const),
-        initials: initials(label),
-      };
-    });
-  },
-});

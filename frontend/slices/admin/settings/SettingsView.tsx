@@ -16,6 +16,7 @@ import { ThemePresetSwitcher } from "@/features/theme-presets";
 import { ImagePickerButton, imageRef } from "@/features/image-picker";
 import { parseSocials } from "@/features/_shared/ui/site-footer";
 import { DEFAULT_SITE_CONFIG } from "@/features/_app/site-config";
+import { ResetLandingCard } from "@/features/_shared/ui/reset-landing-card";
 
 /** One coherent settings editor for the Convex `siteSettings` singleton (the
  *  same row the wizard / public chrome read). Brand / Contact / Social / About
@@ -266,6 +267,8 @@ export function SettingsView() {
           <ThemePresetSwitcher />
         </CardContent>
       </Card>
+
+      <ResetLandingCard />
 
       <div className="grid gap-4 md:grid-cols-2">
         <UpdateCard />
