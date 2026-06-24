@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { IconPickerPopover, DynamicIcon } from "@/features/icon-picker";
-import { ImagePickerButton, ImageBanner, parseImage, imageRef } from "@/features/image-picker";
+import { ImagePickerButton, ImageBanner, parseImage } from "@/features/image-picker";
 import { unsplashSearchVia } from "@/features/image-picker";
 import type { Project, ProjectStatus } from "@/features/_app/types";
 import { nid, useProjects, useStore } from "@/features/_app/store";
@@ -131,14 +131,14 @@ export function ProjectEditor({ id }: { id: string | null }) {
                 label={cover ? "Change cover" : "Choose cover"}
                 title="Project cover"
                 searchUnsplash={unsplashSearchVia("/api/unsplash")}
-                onChange={(img) => setCover(imageRef(img) ?? "")}
+                onChange={(img) => setCover(img?.value ?? "")}
               />
             </div>
             {cover ? (
               <ImageBanner
                 image={parseImage(cover)}
                 searchUnsplash={unsplashSearchVia("/api/unsplash")}
-                onChange={(next) => setCover(next ? imageRef(next) ?? "" : "")}
+                onChange={(next) => setCover(next ? next?.value ?? "" : "")}
                 className="h-40 w-full overflow-hidden rounded-md border border-border/60"
               />
             ) : (

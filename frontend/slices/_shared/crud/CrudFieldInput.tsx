@@ -21,7 +21,6 @@ import {
   ImagePickerButton,
   ImageBanner,
   parseImage,
-  imageRef,
   unsplashSearchVia,
 } from "@/features/image-picker";
 import type { FieldDef } from "./types";
@@ -249,7 +248,7 @@ export function CrudFieldInput<T>({
               title={field.label}
               onUpload={onUpload}
               searchUnsplash={unsplashSearchVia("/api/unsplash")}
-              onChange={(img) => onChange(imageRef(img) ?? "")}
+              onChange={(img) => onChange(img?.value ?? "")}
             />
           </div>
           {cover ? (
@@ -257,7 +256,7 @@ export function CrudFieldInput<T>({
               image={parseImage(cover)}
               onUpload={onUpload}
               searchUnsplash={unsplashSearchVia("/api/unsplash")}
-              onChange={(next) => onChange(next ? imageRef(next) ?? "" : "")}
+              onChange={(next) => onChange(next ? next?.value ?? "" : "")}
               className="h-32 w-full overflow-hidden rounded-md border border-border/60"
             />
           ) : (
