@@ -15,6 +15,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { IconPickerPopover, DynamicIcon } from "@/features/icon-picker";
+import {
+  ImagePickerButton,
+  ImageBanner,
+  parseImage,
+  imageRef,
+  unsplashSearchVia,
+} from "@/features/image-picker";
 import type { FieldDef } from "./types";
 
 // Upload a File to Convex storage -> served URL string. Used by both the plain
@@ -229,5 +237,49 @@ export function CrudFieldInput<T>({
           onUpload={onUpload}
         />
       );
+    case "imagePicker": {
+      const cover = String(value ?? "");
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center justify-end">
+            <ImagePickerButton
+              label={cover ? "Change image" : "Pick image"}
+              title={field.label}
+              onUpload={onUpload}
+              searchUnsplash={unsplashSearchVia("/api/unsplash")}
+              onChange={(img) => onChange(imageRef(img) ?? "")}
+            />
+          </div>
+          {cover ? (
+            <ImageBanner
+              image={parseImage(cover)}
+              onUpload={onUpload}
+              searchUnsplash={unsplashSearchVia("/api/unsplash")}
+              onChange={(next) => onChange(next ? imageRef(next) ?? "" : "")}
+              className="h-32 w-full overflow-hidden rounded-md border border-border/60"
+            />
+          ) : (
+            <p className="rounded-md border border-dashed border-border/60 px-3 py-5 text-center text-xs text-muted-foreground">
+              No image yet — pick a color, gradient, paste a URL, or search Unsplash.
+            </p>
+          )}
+        </div>
+      );
+    }
+    case "icon": {
+      const icon = String(value ?? "");
+      return (
+        <div className="flex items-center gap-2">
+          <IconPickerPopover value={icon} onChange={(next) => onChange(next)}>
+            <Button type="button" variant="outline" size="icon" aria-label={`Pick ${field.label}`}>
+              {icon ? <DynamicIcon value={icon} size={18} /> : "+"}
+            </Button>
+          </IconPickerPopover>
+          <span className="text-xs text-muted-foreground">
+            {icon ? icon : "No icon yet"}
+          </span>
+        </div>
+      );
+    }
   }
 }

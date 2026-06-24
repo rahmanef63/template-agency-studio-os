@@ -5,7 +5,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 // Admin-panel "Analytics" block — READ-ONLY. Mirrors convex/settings.ts auth
 // guard (getAuthUserId -> throw if not signed in). No mutations: analytics is
 // read-only by nature. KPIs + the 30-day series are computed from REAL agency
-// tables (agencyProjects, agencyLeads, agencySubscribers, agencyComments,
+// tables (agencyProjects, agencyLeads, agencySubscribers, comment_threads,
 // agencyArticles) via _creationTime. sources / topPages / funnel are
 // illustrative — there is no event-tracking infra in this template (the
 // event-tracking slice is config-only), so those keep the demo's seed shape.
@@ -45,7 +45,9 @@ export const get = query({
       ctx.db.query("agencyProjects").collect(),
       ctx.db.query("agencyLeads").collect(),
       ctx.db.query("agencySubscribers").collect(),
-      ctx.db.query("agencyComments").collect(),
+      // Live comments land in comment_threads (the agencyComments table is dead —
+      // nothing writes to it). Soft-deleted rows still count as past activity.
+      ctx.db.query("comment_threads").collect(),
       ctx.db.query("agencyArticles").collect(),
     ]);
 
