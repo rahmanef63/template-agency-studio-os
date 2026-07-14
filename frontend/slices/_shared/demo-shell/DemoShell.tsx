@@ -17,7 +17,7 @@ import { SplitOverlay } from "./SplitOverlay";
 // nests inside itself. Mounted in the ROOT layout; renders null in real clones
 // (IS_DEMO false) and inside the iframes (embedded).
 
-const PORTAL_URL = "https://portal-pi-lake.vercel.app";
+const PORTAL_URL = "https://free-template.rahmanef.com";
 const MODE_KEY = "agency-studio-os:demo:mode";
 type Mode = "public" | "admin" | "split";
 const MODES: { id: Mode; label: string }[] = [
