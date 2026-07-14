@@ -54,6 +54,7 @@ export function renderLanding(section: LandingSection, deps: Deps) {
             primaryCta={{ label: cfgString(cfg, "ctaPrimaryLabel") ?? "Start a project", href: cfgString(cfg, "ctaPrimaryHref") ?? `${PUBLIC_BASE}/contact` }}
             secondaryCta={{ label: cfgString(cfg, "ctaSecondaryLabel") ?? "See work", href: cfgString(cfg, "ctaSecondaryHref") ?? `${PUBLIC_BASE}/portfolio` }}
             sidekick={<HeroMetrics />}
+            glow
             layers={section.layers}
             shade={section.shade}
           />
