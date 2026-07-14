@@ -8,6 +8,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ThemeColorPicker } from "@/features/_shared/ui/theme-color-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { UpdateCard } from "@/components/admin/update-card";
@@ -143,10 +144,11 @@ export function SettingsView() {
                 <Input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder={c.studioName} />
               </Field>
               <Field label="Brand color">
-                <div className="flex items-center gap-2">
-                  <Input type="color" value={brandColor || c.themeColor} onChange={(e) => setBrandColor(e.target.value)} className="h-10 w-14 p-1" />
-                  <Input value={brandColor} onChange={(e) => setBrandColor(e.target.value)} placeholder={c.themeColor} />
-                </div>
+                <ThemeColorPicker
+                  value={brandColor}
+                  onChange={setBrandColor}
+                  placeholder={c.themeColor}
+                />
               </Field>
             </div>
             <Field label="Logo">

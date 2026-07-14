@@ -73,7 +73,7 @@ export type LandingSection = {
 export type HeroLayer = {
   /** Stable id (React key + editor rows). */
   id: string;
-  type: "image" | "html";
+  type: "image" | "html" | "color";
   /** Off => skipped at render (the "optional" toggle). */
   enabled: boolean;
   placement: "background" | "foreground";
@@ -81,6 +81,9 @@ export type HeroLayer = {
   opacity: number;
   /** type=image: image URL or /public path. */
   url?: string;
+  /** type=color: a hex (#rrggbb) or a theme token (e.g. `var(--primary)`)
+   *  used as a solid overlay band. Tracks the active theme preset. */
+  color?: string;
   /** type=html: raw HTML injected into the layer. */
   html?: string;
   /** type=html: extra CSS injected in a <style> tag for this layer

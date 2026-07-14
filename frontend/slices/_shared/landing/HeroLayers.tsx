@@ -77,6 +77,18 @@ function HeroLayerView({ layer }: { layer: HeroLayer }) {
       />
     );
   }
+  if (layer.type === "color") {
+    // Solid-color overlay. `color` is a hex or a theme token (e.g.
+    // `var(--primary)`), so it tracks the active theme preset.
+    if (!layer.color) return null;
+    return (
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{ background: layer.color, opacity }}
+      />
+    );
+  }
   // type === "html": author-controlled markup + optional CSS (admin-only
   // landing editor, never visitor input) — safe to dangerouslySet.
   return (

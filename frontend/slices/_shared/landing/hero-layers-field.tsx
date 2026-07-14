@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ThemeColorPicker } from "@/features/_shared/ui/theme-color-picker";
 import type { HeroLayer } from "./types";
 
 // Upload a File to Convex storage -> served URL (WebP-optimized). Mirrors
@@ -76,16 +77,16 @@ export function HeroLayersField({
     set(layers.map((l, idx) => (idx === i ? { ...l, ...p } : l)));
   }
   function add(type: HeroLayer["type"]) {
-    set([
-      ...layers,
-      {
-        id: `layer-${type}-${layers.length + 1}`,
-        type,
-        enabled: true,
-        placement: "background",
-        opacity: 100,
-      },
-    ]);
+    const layer: HeroLayer = {
+      id: `layer-${type}-${layers.length + 1}`,
+      type,
+      enabled: true,
+      placement: "background",
+      // Overlays default to a subtle brand tint; image/html default to full.
+      opacity: type === "color" ? 30 : 100,
+    };
+    if (type === "color") layer.color = "var(--primary)";
+    set([...layers, layer]);
   }
   function remove(i: number) {
     set(layers.filter((_, idx) => idx !== i));
@@ -107,7 +108,12 @@ export function HeroLayersField({
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] font-medium text-muted-foreground">
-              Layer {i + 1} · {l.type === "image" ? "Image" : "HTML / CSS"}
+              Layer {i + 1} ·{" "}
+              {l.type === "image"
+                ? "Image"
+                : l.type === "color"
+                ? "Color overlay"
+                : "HTML / CSS"}
             </span>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
@@ -193,6 +199,16 @@ export function HeroLayersField({
                 className="font-mono text-xs"
               />
             </div>
+          ) : l.type === "color" ? (
+            <div className="space-y-2">
+              <Label className="text-[10px] text-muted-foreground">
+                Overlay color · pilih theme preset atau custom
+              </Label>
+              <ThemeColorPicker
+                value={l.color ?? ""}
+                onChange={(c) => patch(i, { color: c })}
+              />
+            </div>
           ) : (
             <div className="space-y-2">
               <div>
@@ -231,6 +247,15 @@ export function HeroLayersField({
           onClick={() => add("image")}
         >
           <Plus className="size-3.5" /> Image layer
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="gap-1"
+          onClick={() => add("color")}
+        >
+          <Plus className="size-3.5" /> Overlay
         </Button>
         <Button
           type="button"
