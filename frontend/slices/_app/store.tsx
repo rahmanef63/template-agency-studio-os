@@ -33,7 +33,7 @@ import { DEFAULT_AI_CONFIG } from "./ai-config-seed";
 // Convex id (existing row); a fresh nid -> insert.
 
 const withId = <T,>(rows: ReadonlyArray<Record<string, unknown>> | undefined): T[] =>
-  ((rows ?? []) as Array<Record<string, unknown>>).map((r) => ({ ...r, id: r._id })) as T[];
+  ((rows ?? []) as Array<Record<string, unknown>>).map(({ _id, _creationTime: _ct, ...r }) => ({ ...r, id: _id })) as T[];
 
 function Provider({ children }: { children: React.ReactNode }) {
   if (IS_DEMO) return <DemoProvider>{children}</DemoProvider>;
