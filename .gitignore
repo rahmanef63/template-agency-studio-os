@@ -12,3 +12,6 @@ next-env.d.ts
 # If you deploy via Convex Cloud, you can re-add the ignore line.
 .vercel
 .DS_Store
+
+# Local MSO runtime state — never commit
+.mso/
